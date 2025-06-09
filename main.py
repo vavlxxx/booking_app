@@ -6,7 +6,7 @@ app = FastAPI()
 
 hotels = [
     {"id": 1, "title": "Sochi", "name": "Hotel Sochi"},
-    {"id": 2, "title": "Dubai", "name": "Hotel Sochi"},
+    {"id": 2, "title": "Dubai", "name": "Hotel Dubai"},
 ]
 
 
