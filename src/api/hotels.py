@@ -2,12 +2,11 @@ from fastapi import (
     APIRouter, 
     Body, 
     Path, 
-    Depends,
     Query,
 )
 
 from schemas.hotels import Hotel, HotelPATCH
-from schemas.dependencies import PaginationDep
+from api.dependencies import PaginationDep
 from helpers.examples import HOTEL_EXAMPLES
 
 router = APIRouter(
