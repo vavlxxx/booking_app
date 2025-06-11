@@ -3,9 +3,11 @@ from fastapi import (
     Body, 
     Path, 
     Depends,
+    Query,
 )
 
-from schemas.hotels import Hotel, HotelPATCH, HotelQueryParams
+from schemas.hotels import Hotel, HotelPATCH
+from schemas.dependencies import PaginationDep
 from helpers.examples import HOTEL_EXAMPLES
 
 router = APIRouter(
@@ -28,18 +30,22 @@ hotels = [
 
 
 @router.get("/", summary="Получение списка отелей")
-def get_hotels(params: HotelQueryParams = Depends()):  
+def get_hotels(
+    pagination: PaginationDep,
+    id_: int | None = Query(default=None, description="ID отеля (фильтрация)"),
+    title: str | None = Query(default=None, description="Название отеля (фильтрация)"),
+    ):  
 
     hotels_ = []
-    start = (params.page-1)*params.per_page
-    
-    for hotel in hotels[start:start+params.per_page]:
-        if params.id_ and hotel["id"] == params.id_:
+    for hotel in hotels:
+        if id_ and hotel["id"] == id_:
             continue
-        if params.title and hotel["title"] != params.title:
+        if title and hotel["title"] != title:
             continue
         hotels_.append(hotel)
-    return hotels_
+
+    start = (pagination.page-1)*pagination.per_page
+    return hotels_[start:start+pagination.per_page]
 
 
 @router.post("/", summary="Создание отеля")
