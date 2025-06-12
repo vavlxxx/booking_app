@@ -2,6 +2,7 @@ from typing import Annotated
 from pydantic import BaseModel
 from fastapi import Depends, Query
 
+
 class PaginationParams(BaseModel):
     
     page: Annotated[int | None, Query(
