@@ -14,7 +14,8 @@ dependencies = [
     "sqlalchemy (>=2.0.41,<3.0.0)",
     "alembic (>=1.16.1,<2.0.0)",
     "asyncpg (==0.29.0)",
-    "greenlet (>=3.2.3,<4.0.0)"
+    "greenlet (>=3.2.3,<4.0.0)",
+    "black (>=25.1.0,<26.0.0)"
 ]
 
 
