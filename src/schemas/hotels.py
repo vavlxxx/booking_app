@@ -2,10 +2,10 @@ from pydantic import BaseModel, Field
 
 
 class Hotel(BaseModel):
-    title: str = Field(default=None, description="Заголовок")
-    location: str = Field(default=None, description="Название отеля")
+    title: str = Field(description="Заголовок", example="Hotel Deluxe")
+    location: str = Field(description="Адрес", example="г. Москва, ул. Пушкинская, д. 5")
 
 
-class HotelPATCH(BaseModel):
-    title: str | None = Field(default=None, description="Заголовок")
-    location: str | None = Field(default=None, description="Название отеля")
+class HotelNullable(BaseModel):
+    title: str | None = Field(default=None, description="Заголовок", example="Hotel Deluxe")
+    location: str | None = Field(default=None, description="Адрес", example="г. Москва, ул. Пушкинская, д. 5")
