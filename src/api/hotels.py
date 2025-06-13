@@ -43,35 +43,37 @@ async def get_hotels(
 @router.post("/", summary="Создание отеля")
 async def create_hotel(
     hotel_data: Hotel = Body(
-        description="Данные об отеле", openapi_examples=HOTEL_EXAMPLES
+        description="Данные об отеле", 
+        openapi_examples=HOTEL_EXAMPLES
     )
 ):
     async with async_session_maker() as session:
-        hotel = await HotelsRepository(session).add(hotel_data.model_dump())
+        hotel = await HotelsRepository(session).add(hotel_data)
         await session.commit()
 
     return {"status": "OK", "data": hotel}
 
 
 @router.delete("/{hotel_id}", summary="Удаление отеля по ID")
-def delete_hotel(hotel_id: int = Path(description="ID отеля")):
-    global hotels
-    hotels = [hotel for hotel in hotels if hotel["id"] != hotel_id]
+async def delete_hotel(hotel_id: int = Path(description="ID отеля")):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).delete(id=hotel_id)
+        await session.commit()
     return {"status": "OK"}
 
 
 @router.put("/{hotel_id}", summary="Полное обновление данных об отеле по ID")
-def update_hotel_put(
+async def update_hotel_put(
     hotel_id: int,
-    hotel_data: Hotel,
+    hotel_data: Hotel = Body(
+        description="Данные об отеле", 
+        openapi_examples=HOTEL_EXAMPLES
+    )
 ):
-    for hotel in hotels:
-        if hotel["id"] == hotel_id:
-            hotel["title"] = hotel_data.title
-            hotel["name"] = hotel_data.name
-            return {"status": "OK"}
-
-    return {"status": "NOT FOUND"}
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, id=hotel_id)
+        await session.commit()
+    return {"status": "OK"}
 
 
 @router.patch("/{hotel_id}", summary="Частичное обновление данных об отеле по ID")
