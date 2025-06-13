@@ -1,65 +1,70 @@
 from fastapi import (
-    APIRouter, 
-    Body, 
-    Path, 
+    APIRouter,
+    Body,
+    Path,
     Query,
 )
 
-from schemas.hotels import Hotel, HotelPATCH
-from api.dependencies import PaginationDep
-from helpers.examples import HOTEL_EXAMPLES
+from sqlalchemy import insert, select
+
+from src.models.hotels import HotelsOrm
+from src.schemas.hotels import Hotel, HotelPATCH
+from src.helpers.examples import HOTEL_EXAMPLES
+from src.api.dependencies import PaginationDep
+from src.db import async_session_maker, engine
 
 router = APIRouter(
     prefix="/hotels",
     tags=["Отели"],
 )
 
-hotels = [
-    {"id": 1, "title": "Sochi", "name": "Hotel Sochi"},
-    {"id": 2, "title": "Dubai", "name": "Hotel Dubai"},
-    {"id": 3, "title": "New York", "name": "Hotel New York"},
-    {"id": 4, "title": "Paris", "name": "Hotel Paris"},
-    {"id": 5, "title": "London", "name": "Hotel London"},
-    {"id": 6, "title": "Moscow", "name": "Hotel Moscow"},
-    {"id": 7, "title": "Tokyo", "name": "Hotel Tokyo"},
-    {"id": 8, "title": "Beijing", "name": "Hotel Beijing"},
-    {"id": 9, "title": "Sydney", "name": "Hotel Sydney"},
-    {"id": 10, "title": "Rio de Janeiro", "name": "Hotel Rio de Janeiro"},
-]
+hotels = []
 
 
 @router.get("/", summary="Получение списка отелей")
-def get_hotels(
+async def get_hotels(
     pagination: PaginationDep,
-    id_: int | None = Query(default=None, description="ID отеля (фильтрация)"),
-    title: str | None = Query(default=None, description="Название отеля (фильтрация)"),
-    ):  
+    location: str | None = Query(default=None, description="Адрес"),
+    title: str | None = Query(default=None, description="Название"),
+):
 
-    hotels_ = []
-    for hotel in hotels:
-        if id_ and hotel["id"] == id_:
-            continue
-        if title and hotel["title"] != title:
-            continue
-        hotels_.append(hotel)
+    async with async_session_maker() as session:
+        
+        limit = pagination.per_page
+        offset = (pagination.page - 1) * limit
+        query = select(HotelsOrm)
+        
+        if location:
+            query = query.filter(HotelsOrm.location.like(f"%{location}%"))
+        if title:
+            query = query.filter(HotelsOrm.title.like(f"%{title}%"))
+        
+        query = (
+            query
+            .limit(limit)
+            .offset(offset)
+        )
 
-    start = (pagination.page-1)*pagination.per_page
-    return hotels_[start:start+pagination.per_page]
+        # print(query.compile(bind=engine, compile_kwargs={"literal_binds": True}))
+        result = await session.execute(query)
+        hotels = result.scalars().all()
+        return hotels
+    
 
 
 @router.post("/", summary="Создание отеля")
-def create_hotel(
+async def create_hotel(
     hotel_data: Hotel = Body(
         description="Данные об отеле", 
         openapi_examples=HOTEL_EXAMPLES
-        )
-    ):
-    global hotels
-    hotels.append({
-        "id": hotels[-1]["id"] + 1,
-        "title": hotel_data.title,
-        "name": hotel_data.name
-    })
+    )
+):
+    async with async_session_maker() as session:
+        add_hotel_stmt = insert(HotelsOrm).values(**hotel_data.model_dump())
+        # print(add_hotel_statement.compile(bind=engine, compile_kwargs={"literal_binds": True}))
+        await session.execute(add_hotel_stmt)
+        await session.commit()
+
     return {"status": "OK"}
 
 
@@ -80,7 +85,7 @@ def update_hotel_put(
             hotel["title"] = hotel_data.title
             hotel["name"] = hotel_data.name
             return {"status": "OK"}
-        
+
     return {"status": "NOT FOUND"}
 
 
@@ -91,11 +96,15 @@ def update_hotel_patch(
 ):
     if hotel_data.title is None and hotel_data.name is None:
         return {"status": "ERROR"}
-    
+
     for hotel in hotels:
         if hotel["id"] == hotel_id:
-            hotel["title"] = hotel_data.title if hotel_data.title is not None else hotel["title"]
-            hotel["name"] = hotel_data.name if hotel_data.name is not None else hotel["name"]
+            hotel["title"] = (
+                hotel_data.title if hotel_data.title is not None else hotel["title"]
+            )
+            hotel["name"] = (
+                hotel_data.name if hotel_data.name is not None else hotel["name"]
+            )
             return {"status": "OK"}
-        
+
     return {"status": "NOT FOUND"}

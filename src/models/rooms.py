@@ -8,8 +8,8 @@ from src.db import Base
 class RoomsOrm(Base):
     __tablename__ = "rooms"
 
-    id_: Mapped[int] = mapped_column(primary_key=True)
-    hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id_"))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
     title: Mapped[str]
     description: Mapped[Optional[str]]
     price: Mapped[int]
