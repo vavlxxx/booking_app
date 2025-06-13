@@ -5,7 +5,7 @@ from fastapi import (
     Query,
 )
 
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, func
 
 from src.models.hotels import HotelsOrm
 from src.schemas.hotels import Hotel, HotelPATCH
@@ -35,9 +35,9 @@ async def get_hotels(
         query = select(HotelsOrm)
         
         if location:
-            query = query.filter(HotelsOrm.location.like(f"%{location}%"))
+            query = query.filter(func.lower(HotelsOrm.location).contains(location.strip().lower()))
         if title:
-            query = query.filter(HotelsOrm.title.like(f"%{title}%"))
+            query = query.filter(func.lower(HotelsOrm.title).contains(title.strip().lower()))
         
         query = (
             query
