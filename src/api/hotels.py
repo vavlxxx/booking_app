@@ -40,6 +40,11 @@ async def get_hotels(
         )
 
 
+@router.get("/{hotel_id}", summary="Получение отеля по ID")
+async def get_hotel(hotel_id: int = Path(description="ID отеля")):
+    async with async_session_maker() as session:
+        return await HotelsRepository(session).get_one_or_none(id=hotel_id)
+
 @router.post("/", summary="Создание отеля")
 async def create_hotel(
     hotel_data: Hotel = Body(
@@ -77,21 +82,11 @@ async def update_hotel_put(
 
 
 @router.patch("/{hotel_id}", summary="Частичное обновление данных об отеле по ID")
-def update_hotel_patch(
+async def update_hotel_patch(
     hotel_id: int,
     hotel_data: HotelPATCH,
 ):
-    if hotel_data.title is None and hotel_data.name is None:
-        return {"status": "ERROR"}
-
-    for hotel in hotels:
-        if hotel["id"] == hotel_id:
-            hotel["title"] = (
-                hotel_data.title if hotel_data.title is not None else hotel["title"]
-            )
-            hotel["name"] = (
-                hotel_data.name if hotel_data.name is not None else hotel["name"]
-            )
-            return {"status": "OK"}
-
-    return {"status": "NOT FOUND"}
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, exclude_unset=True, id=hotel_id)
+        await session.commit()
+    return {"status": "OK"}

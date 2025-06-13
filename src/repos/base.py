@@ -30,26 +30,36 @@ class BaseRepository:
         return result.scalars().one()
 
 
-    async def is_only_one(self, **filter_by) -> bool:
+    async def __is_only_one(self, **filter_by) -> bool:
 
         query = select(self.model).filter_by(**filter_by)
         result = await self.session.execute(query)
         data = result.scalars().all()
 
         if len(data) > 1:
-            raise HTTPException(status_code=400, detail="Got more than one objects. Try another filters")
+            raise HTTPException(
+                status_code=400, 
+                detail="Got more than one objects. Try another filters"
+            )
         if len(data) == 0:
-            raise HTTPException(status_code=404, detail="Object not found. Try another filters")
+            raise HTTPException(
+                status_code=404, 
+                detail="Object not found. Try another filters"
+            )
 
 
 
-    async def edit(self, data: BaseModel, **filter_by):
-        await self.is_only_one(**filter_by)
-        edit_obj_stmt = update(self.model).filter_by(**filter_by).values(**data.model_dump())
+    async def edit(self, data: BaseModel, exclude_unset=False, **filter_by):
+        await self.__is_only_one(**filter_by)
+        edit_obj_stmt = (
+            update(self.model)
+            .filter_by(**filter_by)
+            .values(**data.model_dump(exclude_unset=exclude_unset))
+        )
         await self.session.execute(edit_obj_stmt)
     
 
     async def delete(self, **filter_by):
-        await self.is_only_one(**filter_by)
+        await self.__is_only_one(**filter_by)
         delete_obj_stmt = delete(self.model).filter_by(**filter_by)
         await self.session.execute(delete_obj_stmt)
