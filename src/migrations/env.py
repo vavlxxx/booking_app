@@ -56,6 +56,7 @@ def run_migrations_offline() -> None:
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
+        include_object=include_object,
         dialect_opts={"paramstyle": "named"},
     )
 
@@ -87,3 +88,8 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+
+def include_object(object, name, type_, reflected, compare_to):
+    if type_ == "check_constraint":
+        return True
+    return True
