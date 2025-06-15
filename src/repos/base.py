@@ -22,6 +22,7 @@ class BaseRepository:
 
     async def get_one_or_none(self, **filter_by) -> BasePydanticModel | None:
         query = select(self.model).filter_by(**filter_by)
+        # print(query.compile(compile_kwargs={"literal_binds": True}))
         result = await self.session.execute(query)
         obj = result.scalars().one_or_none()
 

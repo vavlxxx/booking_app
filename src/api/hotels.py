@@ -5,7 +5,7 @@ from fastapi import (
 )
 
 from src.schemas.hotels import HotelAdd, HotelNullable
-from src.helpers.examples import HOTEL_EXAMPLES
+from src.helpers.hotels import HOTEL_EXAMPLES
 from src.api.dependencies import PaginationDep, HotelDep
 from src.db import async_session_maker
 from src.repos.hotels import HotelsRepository

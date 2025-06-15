@@ -1,43 +1,33 @@
-from datetime import date, datetime
-
-from pydantic import Field, field_validator, EmailStr, PastDate
-from pydantic_core import PydanticCustomError
-
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from pydantic import Field, EmailStr, PastDate
 
 from src.schemas.base import BasePydanticModel
 
 
-class UserAdd(BasePydanticModel):
-    email: str
-    first_name: str
-    last_name: str
-    birthday: date
-    gender: str
-    hashed_password: str
-
-
-class UserAuthentication(BasePydanticModel):
-
-    password: str = Field(description=" Пароль", example="qwerty123")
+class _UserData(BasePydanticModel):
     first_name: str = Field(description="Имя", example="John")
     last_name: str = Field(description="Фамилия", example="Doe")
     gender: str = Field(description="Пол", example="M", pattern="^[МЖ]$")
-    email: EmailStr = Field(description="Электронная почта", example="mymail@example.com")
     birthday: PastDate = Field(description="Дата рождения", example="1970-01-01")
 
-    def hash_password(self):
-        data = self.model_dump(exclude={"password"})
-        data["hashed_password"] = pwd_context.hash(self.password)
-        return UserAdd.model_validate(data)
+
+class UserLoginRequest(BasePydanticModel):
+    email: EmailStr = Field(description="Электронная почта", example="mymail@example.com")
+    password: str = Field(description=" Пароль", example="qwerty123")
 
 
-class User(BasePydanticModel):
+class UserRegisterRequest(UserLoginRequest, _UserData):
+    ...
+
+
+class UserRegister(_UserData):
+    hashed_password: str
+    email: EmailStr
+
+   
+class User(_UserData):
     id: int
-    email: str
-    gender: str
-    birthday: date | str
-    last_name: str
-    first_name: str
+    email: EmailStr
+
+class UserFullInfo(User):
+    hashed_password: str
+    
