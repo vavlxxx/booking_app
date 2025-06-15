@@ -5,6 +5,7 @@ from src.schemas.auth import UserRegister, UserRegisterRequest, UserLoginRequest
 from src.repos.auth import AuthRepository
 from src.helpers.auth import USER_REGISTER_EXAMPLES, USER_LOGIN_EXAMPLES
 from src.services.auth import AuthService
+from src.api.dependencies import UserIdDep
 
 router = APIRouter(prefix="/auth", tags=["Авторизация и Аутентификация"])
 
@@ -44,9 +45,20 @@ async def login_user(
         return {"status": "OK", "access_token": access_token}
 
 
-@router.get("/only_auth", summary="Проверка авторизации через cookie")
+@router.get("/profile", summary="Получить профиль")
 async def only_auth(
         request: Request,
+        user_id: UserIdDep
 ):
-    access_token = request.cookies.get("access_token", None)
-    return {"access_token": access_token}
+
+    async with async_session_maker() as session:
+        user = await AuthRepository(session).get_one_or_none(id=user_id)
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+
+
+@router.delete("/logout", summary="Выход из аккаунта")
+async def logout_user(response: Response = Response(status_code=200)):
+    response.delete_cookie(key="access_token")
+    return {"status": "OK"}

@@ -1,5 +1,6 @@
 import jwt
 
+from fastapi import HTTPException
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 
@@ -26,3 +27,11 @@ class AuthService:
             to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
         )
         return encoded_jwt
+
+    @staticmethod
+    def decode_access_token(access_token) -> dict[str, str]:
+        try:
+            return jwt.decode(access_token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        except jwt.exceptions.DecodeError:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        

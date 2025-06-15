@@ -24,7 +24,7 @@ class AuthRepository(BaseRepository):
         obj = result.scalars().one_or_none()
 
         if obj is None:
-            return None
+            raise HTTPException(status_code=404, detail="User not found")
             
         return UserFullInfo.model_validate(obj)
     
