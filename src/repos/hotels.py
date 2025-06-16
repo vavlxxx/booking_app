@@ -12,16 +12,20 @@ class HotelsRepository(BaseRepository):
     schema = Hotel
     not_found_message = "Отель по заданному id не найден"
 
-    async def get_all(self, location, title, limit, offset) -> list[Hotel]:
+    async def get_all_filtered(self, location, title, limit, offset) -> list[Hotel]:
         query = select(HotelsOrm)
 
         if location:
             query = query.filter(
-                func.lower(HotelsOrm.location).contains(location.strip().lower())
+                func
+                .lower(HotelsOrm.location)
+                .contains(location.strip().lower())
             )
         if title:
             query = query.filter(
-                func.lower(HotelsOrm.title).contains(title.strip().lower())
+                func
+                .lower(HotelsOrm.title)
+                .contains(title.strip().lower())
             )
 
         query = query.limit(limit).offset(offset)
@@ -29,15 +33,15 @@ class HotelsRepository(BaseRepository):
         hotels = [self.schema.model_validate(hotel) for hotel in result.scalars().all()]
 
         if not hotels:
-            raise HTTPException(status_code=404, detail="Не было найдено ни одного отеля")
+            raise HTTPException(status_code=404, detail="По запрашиваемым данным отелей не найдено")
         return hotels
     
 
     async def delete(self, **filter_by):
         from src.repos.rooms import RoomsRepository
         
-        await self.get_one_or_none(**filter_by)
-        rooms = await RoomsRepository(self.session).get_all(hotel_id=filter_by["id"])
+        await self.check_existence(**filter_by)
+        rooms = await RoomsRepository(self.session).get_all_filtered(hotel_id=filter_by["id"])
         if rooms:
             raise HTTPException(status_code=400, detail="Нельзя удалить отель с номерами")
 

@@ -3,7 +3,8 @@ from fastapi import Depends, HTTPException, Path, Query, Request
 
 from services.auth import AuthService
 from src.schemas.base import BasePydanticModel
-from src.schemas.auth import User
+from src.utils.db_manager import DBManager
+from src.db import async_session_maker
 
 
 class PaginationParams(BasePydanticModel):
@@ -41,3 +42,15 @@ def get_current_user(access_token: str = Depends(get_token)):
     return data.get("user_id")
     
 UserIdDep = Annotated[int, Depends(get_current_user)]
+
+
+def get_db_manager():
+    return DBManager(session_factory=async_session_maker)
+
+
+async def get_db():
+    async with get_db_manager() as db:
+        yield db
+
+
+DBDep = Annotated[DBManager, Depends(get_db)]

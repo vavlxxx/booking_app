@@ -11,16 +11,11 @@ class RoomsRepository(BaseRepository):
     schema = FullRoomData
     not_found_message = "Номер по заданным id не найден"
 
+
     async def add(self, data: Room, hotel_id: int):
         from src.repos.hotels import HotelsRepository
         
-        hotel = await HotelsRepository(self.session).get_one_or_none(id=hotel_id)
-        if hotel is None:
-            raise HTTPException(
-                status_code=404, 
-                detail="К сожалению такого отеля не существует. Возможно вы ошиблись при вводе id"
-            )
-               
+        await HotelsRepository(self.session).check_existence(id=hotel_id)
         add_obj_stmt = insert(self.model).values(**data.model_dump(), hotel_id=hotel_id).returning(self.model)
         result = await self.session.execute(add_obj_stmt)
         obj = result.scalars().one()

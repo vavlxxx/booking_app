@@ -1,5 +1,5 @@
+from fastapi import HTTPException
 from sqlalchemy import delete, select, insert, update
-from fastapi.exceptions import HTTPException
 
 from src.schemas.base import BasePydanticModel
 
@@ -15,22 +15,24 @@ class BaseRepository:
         self.session = session
 
 
-    async def get_all(self, **filter_by) -> list[BasePydanticModel]:
+    async def get_all_filtered(self, **filter_by):
         query = select(self.model).filter_by(**filter_by)
         result = await self.session.execute(query)
-        objs = [self.schema.model_validate(obj) for obj in result.scalars().all()]
-        return objs
+        return [self.schema.model_validate(obj) for obj in result.scalars().all()]
+
+
+    async def get_all(self) -> list[BasePydanticModel]:
+        return await self.get_all_filtered()
 
 
     async def get_one_or_none(self, **filter_by) -> BasePydanticModel | None:
         query = select(self.model).filter_by(**filter_by)
-        # print(query.compile(compile_kwargs={"literal_binds": True}))
         result = await self.session.execute(query)
         obj = result.scalars().one_or_none()
 
         if obj is None:
-            raise HTTPException(status_code=404, detail=self.not_found_message)
-
+            return None
+        
         return self.schema.model_validate(obj) 
 
 
@@ -42,7 +44,7 @@ class BaseRepository:
 
 
     async def edit(self, data: BasePydanticModel, exclude_unset=True, **filter_by):
-        await self.get_one_or_none(**filter_by)        
+        await self.check_existence(**filter_by)
         edit_obj_stmt = (
             update(self.model)
             .filter_by(**filter_by)
@@ -52,7 +54,13 @@ class BaseRepository:
     
 
     async def delete(self, **filter_by):
-        await self.get_one_or_none(**filter_by)
+        await self.check_existence(**filter_by)
         delete_obj_stmt = delete(self.model).filter_by(**filter_by)
         await self.session.execute(delete_obj_stmt)
     
+    
+    async def check_existence(self, **filter_by):
+        obj = await self.get_one_or_none(**filter_by)
+        if obj is None:
+            raise HTTPException(status_code=404, detail=self.not_found_message)
+        return obj

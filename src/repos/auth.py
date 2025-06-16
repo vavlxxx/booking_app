@@ -9,11 +9,12 @@ from src.models.users import UsersOrm
 class AuthRepository(BaseRepository):
     model = UsersOrm
     schema = User
+    not_found_message = "Пользователь не найден"
 
     async def add(self, data: UserRegister):
         result = await self.get_one_or_none(email=data.email)
         if result is not None:
-            raise HTTPException(status_code=400, detail="User with that email address already exists. Try another")
+            raise HTTPException(status_code=400, detail="Пользователь с таким логином уже существует")
         
         return await super().add(data)
     
@@ -24,7 +25,7 @@ class AuthRepository(BaseRepository):
         obj = result.scalars().one_or_none()
 
         if obj is None:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=404, detail=self.not_found_message)
             
         return UserFullInfo.model_validate(obj)
     
