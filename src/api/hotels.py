@@ -1,6 +1,7 @@
 from fastapi import (
     APIRouter,
     Body,
+    HTTPException,
     Path,
 )
 
@@ -17,26 +18,25 @@ router = APIRouter(
 
 
 @router.get("/", summary="Получить список отелей")
-async def get_hotels(
-    pagination: PaginationDep,
-    hotel_data: HotelDep
-):
+async def get_hotels(pagination: PaginationDep, hotel_data: HotelDep):
     limit = pagination.per_page
     offset = (pagination.page - 1) * limit
     
     async with async_session_maker() as session:
-        return await HotelsRepository(session).get_all(
+        hotels = await HotelsRepository(session).get_all(
             location=hotel_data.location,
             title=hotel_data.title,
             limit=limit,
             offset=offset,
-        )
+        )    
+    return hotels
 
 
 @router.get("/{hotel_id}", summary="Получить отель")
 async def get_hotel(hotel_id: int = Path(description="ID отеля", example=1)):
     async with async_session_maker() as session:
-        return await HotelsRepository(session).get_one_or_none(id=hotel_id)
+        hotel = await HotelsRepository(session).get_one_or_none(id=hotel_id)
+    return hotel
 
 
 @router.post("/", summary="Добавить отель")
@@ -55,9 +55,10 @@ async def create_hotel(
 
 @router.delete("/{hotel_id}", summary="Удалить отель")
 async def delete_hotel(hotel_id: int = Path(description="ID отеля", example=1)):
-    async with async_session_maker() as session:
+    async with async_session_maker() as session:       
         await HotelsRepository(session).delete(id=hotel_id)
         await session.commit()
+
     return {"status": "OK"}
 
 
@@ -84,6 +85,6 @@ async def update_hotel_patch(
     ),
 ):
     async with async_session_maker() as session:
-        await HotelsRepository(session).edit(hotel_data, exclude_unset=True, id=hotel_id)
+        await HotelsRepository(session).edit(hotel_data, id=hotel_id)
         await session.commit()
     return {"status": "OK"}

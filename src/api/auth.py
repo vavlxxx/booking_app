@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, HTTPException, Response, Request
+from fastapi import APIRouter, Body, HTTPException, Response
 
 from src.db import async_session_maker
 from src.schemas.auth import UserRegister, UserRegisterRequest, UserLoginRequest
@@ -38,7 +38,7 @@ async def login_user(
         password_is_valid =  AuthService().verify_password(user_data.password, user.hashed_password)
 
         if user is None or not password_is_valid:
-            raise HTTPException(status_code=401, detail="Sorry, but password or login is wrong")
+            raise HTTPException(status_code=401, detail="Неверные логин или пароль")
         
         access_token = AuthService.create_access_token({"user_id": user.id})
         response.set_cookie(key="access_token", value=access_token)
@@ -47,18 +47,17 @@ async def login_user(
 
 @router.get("/profile", summary="Получить профиль")
 async def only_auth(
-        request: Request,
         user_id: UserIdDep
 ):
 
     async with async_session_maker() as session:
         user = await AuthRepository(session).get_one_or_none(id=user_id)
         if user is None:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=404, detail="Пользователь не найден")
         return user
 
 
-@router.delete("/logout", summary="Выход из аккаунта")
+@router.delete("/logout", summary="Выйти из аккаунта")
 async def logout_user(response: Response = Response(status_code=200)):
     response.delete_cookie(key="access_token")
     return {"status": "OK"}

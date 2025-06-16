@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends, HTTPException, Query, Request
+from fastapi import Depends, HTTPException, Path, Query, Request
 
 from services.auth import AuthService
 from src.schemas.base import BasePydanticModel
@@ -22,10 +22,17 @@ class HotelParams(BasePydanticModel):
 HotelDep = Annotated[HotelParams, Depends()]
 
 
+class RoomWithIds(BasePydanticModel):
+    id: Annotated[int, Path(description="ID номера", example=1)]
+    hotel_id: Annotated[int, Path(description="ID отеля", example=1)]
+
+RoomWithIdsDep = Annotated[RoomWithIds, Depends()]
+
+
 def get_token(request: Request) -> str | None:
     access_token = request.cookies.get("access_token", None)
     if access_token is None:
-        raise HTTPException(status_code=401, detail="Not authenticated. Please provice the access_token")
+        raise HTTPException(status_code=401, detail="Не аутентифицирован. Пожалуйста предоставьте токен доступа")
     return access_token
 
 
