@@ -1,5 +1,3 @@
-from fastapi import HTTPException
-from sqlalchemy import select
 from src.repos.base import BaseRepository
 from src.repos.rooms import RoomsRepository
 from src.schemas.bookings import Booking, BookingWIthUser, BookingAdd
@@ -17,4 +15,3 @@ class BookingsRepository(BaseRepository):
         booking_to_add = BookingAdd(**data.model_dump(), price=room.discounted_price)
         booking = await super().add(booking_to_add)
         return booking
-    

@@ -16,6 +16,9 @@ class FullRoomData(Room):
     hotel_id: int = Field(description="ID отеля", example=1)
     discounted_price: float
 
+class RoomDataWithEmptyRooms(FullRoomData):
+    empty_rooms: int
+
 
 class RoomOptional(BasePydanticModel):
     title: str | None = Field(default=None, description="Название номера", example="Стандарт")

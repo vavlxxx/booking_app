@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Annotated
 from fastapi import Depends, HTTPException, Path, Query, Request
 
@@ -28,6 +29,13 @@ class RoomWithIds(BasePydanticModel):
     hotel_id: Annotated[int, Path(description="ID отеля", example=1)]
 
 RoomWithIdsDep = Annotated[RoomWithIds, Depends()]
+
+
+class Dates(BasePydanticModel):
+    date_from: Annotated[date, Query(example="2025-08-01", description="Дата въезда")]
+    date_to: Annotated[date, Query(example="2025-08-08", description="Дата выезда")]
+
+DateDep = Annotated[Dates, Depends()]
 
 
 def get_token(request: Request) -> str | None:
