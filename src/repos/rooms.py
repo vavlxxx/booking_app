@@ -1,9 +1,9 @@
 from fastapi import HTTPException
-from sqlalchemy import delete, insert
+from sqlalchemy import insert
 
 from src.repos.base import BaseRepository
-from src.models.rooms import RoomsOrm
 from src.schemas.rooms import FullRoomData, Room
+from src.models.rooms import RoomsOrm
 
 
 class RoomsRepository(BaseRepository):
@@ -21,3 +21,10 @@ class RoomsRepository(BaseRepository):
         obj = result.scalars().one()
         return self.schema.model_validate(obj)
     
+    async def delete(self, **filter_by):
+        from src.repos.bookings import BookingsRepository
+
+        bookings = await BookingsRepository(self.session).get_all_filtered(room_id=filter_by["id"])
+        if bookings:
+            raise HTTPException(status_code=400, detail="Нельзя удалить номер с бронированиями")
+        return await super().delete(**filter_by)

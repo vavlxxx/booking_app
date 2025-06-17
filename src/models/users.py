@@ -1,7 +1,7 @@
 from datetime import date
 
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Computed, String, Date, CheckConstraint, func
+from sqlalchemy import String, CheckConstraint
 
 from src.db import Base
 
