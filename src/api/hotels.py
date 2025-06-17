@@ -8,7 +8,7 @@ from src.schemas.hotels import HotelAdd, HotelNullable
 from src.helpers.hotels import HOTEL_EXAMPLES
 from src.api.dependencies import (
     PaginationDep, 
-    HotelDep, 
+    HoteParamslDep, 
     DBDep
 )
 
@@ -22,12 +22,12 @@ router = APIRouter(
 @router.get("/", summary="Получить список отелей")
 async def get_hotels(
     pagination: PaginationDep, 
-    hotel_data: HotelDep,
+    hotel_filter_data: HoteParamslDep,
     db: DBDep
 ):
     hotels = await db.hotels.get_all_filtered(
-        location=hotel_data.location,
-        title=hotel_data.title,
+        location=hotel_filter_data.location,
+        title=hotel_filter_data.title,
         limit=pagination.per_page,
         offset=(pagination.page - 1) * pagination.per_page,
     )    

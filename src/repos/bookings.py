@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+from sqlalchemy import select
 from src.repos.base import BaseRepository
 from src.repos.rooms import RoomsRepository
 from src.schemas.bookings import Booking, BookingWIthUser, BookingAdd
@@ -9,8 +11,10 @@ class BookingsRepository(BaseRepository):
     schema = Booking
     not_found_message = "Бронирование по заданным id не найдено"
 
+
     async def add(self, data: BookingWIthUser):
         room = await RoomsRepository(self.session).check_existence(id=data.room_id)
         booking_to_add = BookingAdd(**data.model_dump(), price=room.discounted_price)
         booking = await super().add(booking_to_add)
         return booking
+    

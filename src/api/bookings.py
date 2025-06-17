@@ -19,3 +19,22 @@ async def create_booking(
     booking = await db.bookings.add(new_booking_data)
     await db.commit()
     return booking
+
+
+@router.get("/me", summary="Получить все бронирования аутентифицированного пользователя")
+async def get_user_bookings(
+    db: DBDep,
+    user_id: UserIdDep
+):
+    bookings = await db.bookings.get_all_filtered(
+        user_id=user_id
+    )
+    return bookings
+
+
+@router.get("/", summary="Получить список бронирований")
+async def get_all_bookings(
+    db: DBDep
+):
+    bookings = await db.bookings.get_all()
+    return bookings

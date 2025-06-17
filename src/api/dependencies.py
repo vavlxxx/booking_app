@@ -20,7 +20,7 @@ class HotelParams(BasePydanticModel):
     title: Annotated[str | None, Query(default=None, description="Название", example="Hotel Deluxe")]
     location: Annotated[str | None, Query(default=None, description="Адрес", example="г. Москва, ул. Пушкинская, д. 5")]
 
-HotelDep = Annotated[HotelParams, Depends()]
+HoteParamslDep = Annotated[HotelParams, Depends()]
 
 
 class RoomWithIds(BasePydanticModel):
@@ -33,7 +33,7 @@ RoomWithIdsDep = Annotated[RoomWithIds, Depends()]
 def get_token(request: Request) -> str | None:
     access_token = request.cookies.get("access_token", None)
     if access_token is None:
-        raise HTTPException(status_code=401, detail="Не аутентифицирован. Пожалуйста предоставьте токен доступа")
+        raise HTTPException(status_code=401, detail="Пользователь не аутентифицирован. Пожалуйста, пройдите аутентификацию")
     return access_token
 
 
