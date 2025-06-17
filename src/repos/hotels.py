@@ -13,7 +13,7 @@ class HotelsRepository(BaseRepository):
     not_found_message = "Отель по заданному id не найден"
 
     async def get_all_filtered(self, location, title, limit, offset) -> list[Hotel]:
-        query = select(HotelsOrm)
+        query = select(self.model)
 
         if location:
             query = query.filter(

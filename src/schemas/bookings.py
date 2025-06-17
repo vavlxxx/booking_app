@@ -1,4 +1,5 @@
-from pydantic import Field, FutureDate, model_validator
+from datetime import datetime, timezone
+from pydantic import Field, FutureDate, field_validator, model_validator, AwareDatetime  
 
 from src.schemas.base import BasePydanticModel
 

@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import datetime, date
 
-from sqlalchemy import CheckConstraint, ForeignKey, Computed
+from sqlalchemy import CheckConstraint, ForeignKey, Computed, DateTime, func
 # from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column, Mapped
 
@@ -17,6 +17,8 @@ class BookingsOrm(Base):
     date_to: Mapped[date]
     price: Mapped[float]
     total_price: Mapped[float] = mapped_column(Computed("price * (date_to - date_from)"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
 
     __table_args__ = (
         CheckConstraint("date_from < date_to", name="check_date_validity"),
