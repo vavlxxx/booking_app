@@ -17,7 +17,7 @@ class FullRoomData(Room):
     discounted_price: float
 
 class RoomDataWithEmptyRooms(FullRoomData):
-    empty_rooms: int
+    empty: int
 
 
 class RoomOptional(BasePydanticModel):

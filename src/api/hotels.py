@@ -21,15 +21,17 @@ router = APIRouter(
 
 @router.get("/", summary="Получить список отелей")
 async def get_hotels(
-    pagination: PaginationDep, 
+    # pagination: PaginationDep, 
     hotel_filter_data: HoteParamslDep,
     db: DBDep
 ):
-    hotels = await db.hotels.get_all_filtered(
-        location=hotel_filter_data.location,
-        title=hotel_filter_data.title,
-        limit=pagination.per_page,
-        offset=(pagination.page - 1) * pagination.per_page,
+    hotels = await db.hotels.get_all_filtered_by_time(
+        # location=hotel_filter_data.location,
+        # title=hotel_filter_data.title,
+        # limit=pagination.per_page,
+        # offset=(pagination.page - 1) * pagination.per_page,
+        date_from=hotel_filter_data.date_from,
+        date_to=hotel_filter_data.date_to
     )    
     return hotels
 

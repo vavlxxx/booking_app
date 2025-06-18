@@ -1,9 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy import delete, select, func
 
+from src.models.rooms import RoomsOrm
 from src.schemas.hotels import Hotel
 from src.models.hotels import HotelsOrm
 from src.repos.base import BaseRepository
+from src.repos.utils import rooms_data_to_booking
 
 
 class HotelsRepository(BaseRepository):
@@ -12,7 +14,8 @@ class HotelsRepository(BaseRepository):
     schema = Hotel
     not_found_message = "Отель по заданному id не найден"
 
-    async def get_all_filtered(self, location, title, limit, offset) -> list[Hotel]:
+
+    async def get_all(self, location, title, limit, offset) -> list[Hotel]:
         query = select(self.model)
 
         if location:
@@ -47,4 +50,12 @@ class HotelsRepository(BaseRepository):
 
         delete_obj_stmt = delete(self.model).filter_by(**filter_by)
         await self.session.execute(delete_obj_stmt)
-    
+
+
+    async def get_all_filtered_by_time(self, date_to, date_from):
+        rooms_data_to_get = rooms_data_to_booking(date_from=date_from, date_to=date_to)
+        hotels_ids_to_get = (
+            select(rooms_data_to_get.c.hotel_id).distinct()
+            .select_from(rooms_data_to_get)
+        )
+        return await self.get_all_filtered(HotelsOrm.id.in_(hotels_ids_to_get))
