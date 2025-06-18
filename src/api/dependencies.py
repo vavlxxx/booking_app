@@ -18,10 +18,10 @@ PaginationDep = Annotated[PaginationParams, Depends()]
 
 class HotelParams(BasePydanticModel):
 
-    # title: Annotated[str | None, Query(default=None, description="Название", example="Hotel Deluxe")]
-    # location: Annotated[str | None, Query(default=None, description="Адрес", example="г. Москва, ул. Пушкинская, д. 5")]
-    date_from: Annotated[date | None, Query(default=None, description="Дата въезда", example="2025-08-01")]
-    date_to: Annotated[date | None, Query(default=None, description="Дата выезда", example="2025-08-10")]
+    title: Annotated[str | None, Query(default=None, description="Название", example="Hotel Deluxe")]
+    location: Annotated[str | None, Query(default=None, description="Адрес", example="г. Москва, ул. Пушкинская, д. 5")]
+    date_from: Annotated[date, Query(default=None, description="Дата въезда", example=date(2025, 8, 1))]
+    date_to: Annotated[date, Query(default=None, description="Дата выезда", example=date(2025, 8, 10))]
 
 HoteParamslDep = Annotated[HotelParams, Depends()]
 

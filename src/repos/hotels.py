@@ -1,3 +1,4 @@
+from datetime import date
 from fastapi import HTTPException
 from sqlalchemy import delete, select, func
 
@@ -15,31 +16,6 @@ class HotelsRepository(BaseRepository):
     not_found_message = "Отель по заданному id не найден"
 
 
-    async def get_all(self, location, title, limit, offset) -> list[Hotel]:
-        query = select(self.model)
-
-        if location:
-            query = query.filter(
-                func
-                .lower(HotelsOrm.location)
-                .contains(location.strip().lower())
-            )
-        if title:
-            query = query.filter(
-                func
-                .lower(HotelsOrm.title)
-                .contains(title.strip().lower())
-            )
-
-        query = query.limit(limit).offset(offset)
-        result = await self.session.execute(query)
-        hotels = [self.schema.model_validate(hotel) for hotel in result.scalars().all()]
-
-        if not hotels:
-            raise HTTPException(status_code=404, detail="По запрашиваемым данным отелей не найдено")
-        return hotels
-    
-
     async def delete(self, **filter_by):
         from src.repos.rooms import RoomsRepository
         
@@ -52,10 +28,39 @@ class HotelsRepository(BaseRepository):
         await self.session.execute(delete_obj_stmt)
 
 
-    async def get_all_filtered_by_time(self, date_to, date_from):
+    async def get_all_filtered_by_time(
+            self, 
+            date_to: date, 
+            date_from: date,
+            limit: int, 
+            offset: int,
+            location: str | None = None,
+            title: str | None = None,
+    ):
         rooms_data_to_get = rooms_data_to_booking(date_from=date_from, date_to=date_to)
         hotels_ids_to_get = (
             select(rooms_data_to_get.c.hotel_id).distinct()
             .select_from(rooms_data_to_get)
         )
-        return await self.get_all_filtered(HotelsOrm.id.in_(hotels_ids_to_get))
+        hotels = select(self.model).filter(HotelsOrm.id.in_(hotels_ids_to_get))
+        
+        if location:
+            hotels = hotels.filter(
+                func
+                .lower(HotelsOrm.location)
+                .contains(location.strip().lower())
+            )
+        if title:
+            hotels = hotels.filter(
+                func
+                .lower(HotelsOrm.title)
+                .contains(title.strip().lower())
+            )
+
+        hotels = hotels.limit(limit).offset(offset)
+        result = await self.session.execute(hotels)
+        filtered_hotels_data = [self.schema.model_validate(hotel) for hotel in result.scalars().all()]
+
+        if not filtered_hotels_data:
+            raise HTTPException(status_code=404, detail="По запрашиваемым данным отелей не найдено")
+        return filtered_hotels_data
