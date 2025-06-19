@@ -60,7 +60,7 @@ def rooms_data_to_booking(
         .select_from(rooms_left)
         .filter(
             rooms_left.c.empty > 0,
-            (rooms_left.c.id).in_(rooms_ids_by_hotel)
+            (rooms_left.c.id).in_(select(rooms_ids_by_hotel))
         )
     )
 

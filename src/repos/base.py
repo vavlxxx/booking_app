@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from sqlalchemy import delete, select, insert, update
 
 from src.schemas.base import BasePydanticModel
@@ -8,7 +7,6 @@ class BaseRepository:
 
     model = None
     schema: BasePydanticModel = None
-    not_found_message = "Объект не найден. Попробуйте ещё раз"
 
 
     def __init__(self, session):
@@ -33,11 +31,14 @@ class BaseRepository:
         query = select(self.model).filter_by(**filter_by)
         result = await self.session.execute(query)
         obj = result.scalars().one_or_none()
-
         if obj is None:
             return None
-        
         return self.schema.model_validate(obj) 
+
+
+    async def add_bulk(self, data: list[BasePydanticModel]):
+        add_obj_stmt = insert(self.model).values([item.model_dump() for item in data])
+        await self.session.execute(add_obj_stmt)
 
 
     async def add(self, data: BasePydanticModel):
@@ -47,24 +48,30 @@ class BaseRepository:
         return self.schema.model_validate(obj)
 
 
-    async def edit(self, data: BasePydanticModel, exclude_unset=True, **filter_by):
-        await self.check_existence(**filter_by)
+    async def edit(self, data: BasePydanticModel, exclude_unset=True, exclude_fields=None, **filter_by):
+        exclude_fields = exclude_fields or set()
+        
+        to_update = data.model_dump(
+            exclude=exclude_fields, 
+            exclude_unset=exclude_unset
+        )
+
+        if not to_update:
+            return
+
         edit_obj_stmt = (
             update(self.model)
             .filter_by(**filter_by)
-            .values(**data.model_dump(exclude_unset=exclude_unset))
+            .values(**to_update)
         )
         await self.session.execute(edit_obj_stmt)
-    
 
-    async def delete(self, **filter_by):
-        await self.check_existence(**filter_by)
-        delete_obj_stmt = delete(self.model).filter_by(**filter_by)
+
+    async def delete(self, *filter, **filter_by):
+        delete_obj_stmt = (
+            delete(self.model)
+            .filter(*filter)
+            .filter_by(**filter_by)
+        )
         await self.session.execute(delete_obj_stmt)
     
-    
-    async def check_existence(self, **filter_by):
-        obj = await self.get_one_or_none(**filter_by)
-        if obj is None:
-            raise HTTPException(status_code=404, detail=self.not_found_message)
-        return obj

@@ -1,8 +1,9 @@
 from datetime import date
 from typing import Annotated
+
 from fastapi import Depends, HTTPException, Path, Query, Request
 
-from services.auth import AuthService
+from src.services.auth import AuthService
 from src.schemas.base import BasePydanticModel
 from src.utils.db_manager import DBManager
 from src.db import async_session_maker
@@ -27,7 +28,7 @@ HoteParamslDep = Annotated[HotelParams, Depends()]
 
 
 class RoomWithIds(BasePydanticModel):
-    id: Annotated[int, Path(description="ID номера", example=1)]
+    room_id: Annotated[int, Path(description="ID номера", example=1)]
     hotel_id: Annotated[int, Path(description="ID отеля", example=1)]
 
 RoomWithIdsDep = Annotated[RoomWithIds, Depends()]

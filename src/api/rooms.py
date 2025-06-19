@@ -1,13 +1,17 @@
-from fastapi import APIRouter, Body, Path, Query
+from fastapi import APIRouter, Body, Path
 
 from src.api.dependencies import RoomWithIdsDep, DBDep, DateDep
-from src.schemas.rooms import Room, RoomOptional
+from src.schemas.rooms import RoomRequest, FullRoomOptional
+from src.schemas.additionals import RoomAdditionalRequest
 from src.helpers.rooms import ROOM_EXAMPLES
 
-router = APIRouter(prefix="/hotels", tags=["Номера"])
+router = APIRouter(
+    prefix="/hotels", 
+    tags=["Номера"]
+)
 
 
-@router.get("/{hotel_id}/rooms", summary="Получить все номера отеля")
+@router.get("/{hotel_id}/rooms", summary="Получить все номера определённого отеля")
 async def get_rooms_by_hotel(
     db: DBDep,
     dates: DateDep,
@@ -23,13 +27,10 @@ async def get_rooms_by_hotel(
 
 @router.get("/{hotel_id}/rooms/{room_id}", summary="Получить конкретный номер отеля")
 async def get_room_by_id(
-    room_ids: RoomWithIdsDep,
-    db: DBDep 
+    db: DBDep,
+    ids: RoomWithIdsDep
 ):
-    room = await db.rooms.check_existence(
-        hotel_id=room_ids.hotel_id, 
-        id=room_ids.id
-    )
+    room = await db.rooms.check_existence(hotel_id=ids.hotel_id, id=ids.room_id)
     return room
 
 
@@ -37,11 +38,21 @@ async def get_room_by_id(
 async def create_room(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля", example=1),
-    room_data: Room = Body(
+    room_data: RoomRequest = Body(
         description="Данные о номере отеля",
         openapi_examples=ROOM_EXAMPLES
 )):
     room = await db.rooms.add(room_data, hotel_id=hotel_id)
+
+    additionals = [
+        RoomAdditionalRequest(
+            additional_id=addit_id, 
+            room_id=room.id
+        ) for addit_id in room_data.additionals_ids]
+
+    if additionals:
+        await db.rooms_additionals.add_bulk(additionals)
+
     await db.commit()
     return {"status": "OK", "data": room}
 
@@ -49,44 +60,54 @@ async def create_room(
 @router.delete("/{hotel_id}/rooms/{room_id}", summary="Удалить номер отеля")
 async def delete_room(
     db: DBDep,
-    room_ids: RoomWithIdsDep
+    ids: RoomWithIdsDep
 ):
-    await db.rooms.delete(id=room_ids.id, hotel_id=room_ids.hotel_id)
+    await db.rooms.delete(id=ids.room_id, hotel_id=ids.hotel_id)
     await db.commit()
     return {"status": "OK"}
 
 
 @router.put("/{hotel_id}/rooms/{room_id}", summary="Обновить номер отеля")
-async def update_hotel_put(
+async def update_room_put(
     db: DBDep,
-    room_ids: RoomWithIdsDep, 
-    room_data: Room = Body(
-        description="Данные о номере отеля",
-        openapi_examples=ROOM_EXAMPLES
-    )
-):
-    await db.rooms.edit(
-        room_data, 
-        id=room_ids.id, 
-        hotel_id=room_ids.hotel_id
-    )
-    await db.commit()
-    return {"status": "OK"}
-
-
-@router.patch("/{hotel_id}/rooms/{room_id}", summary="Частично обновить номер отеля")
-async def update_hotel_patch(
-    db: DBDep,
-    room_ids: RoomWithIdsDep, 
-    room_data: RoomOptional = Body(
+    ids: RoomWithIdsDep, 
+    room_data: RoomRequest = Body(
         description="Данные о номере отеля",
         openapi_examples=ROOM_EXAMPLES
     )
 ):  
     await db.rooms.edit(
         room_data, 
-        id=room_ids.id, 
-        hotel_id=room_ids.hotel_id
+        id=ids.room_id, 
+        hotel_id=ids.hotel_id,
+        exclude_fields={"additionals_ids"}
+    )
+    await db.rooms_additionals.update_all(
+        room_id=ids.room_id, 
+        additionals_ids=room_data.additionals_ids
+    )
+    await db.commit()
+    return {"status": "OK"}
+
+
+@router.patch("/{hotel_id}/rooms/{room_id}", summary="Частично обновить номер отеля")
+async def update_room_patch(
+    db: DBDep,
+    ids: RoomWithIdsDep, 
+    room_data: FullRoomOptional = Body(
+        description="Данные о номере отеля",
+        openapi_examples=ROOM_EXAMPLES
+    )
+):  
+    await db.rooms.edit(
+        room_data, 
+        id=ids.room_id, 
+        hotel_id=ids.hotel_id,
+        exclude_fields={"additionals_ids"}
+    )
+    await db.rooms_additionals.update_all(
+        room_id=ids.room_id, 
+        additionals_ids=room_data.additionals_ids
     )
     await db.commit()
     return {"status": "OK"}

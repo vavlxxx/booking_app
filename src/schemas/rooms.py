@@ -1,19 +1,23 @@
+from typing import Optional
 from pydantic import Field
 
 from src.schemas.base import BasePydanticModel 
 
 
-class Room(BasePydanticModel):
-    title: str = Field(description="Название номера", example="Стандарт")
-    description: str | None = Field(description="Описание номера", example="Номер в отеле в центре Москвы", default=None)
-    quantity: int = Field(description="Количество номеров", example=10)
-    price: float = Field(description="Цена", example=1000.00)
-    discount: int | None = Field(default=0, le=100, ge=0, description="Скидка", example=10)
+class RoomDefault(BasePydanticModel):
+    title: str
+    description: Optional[str] = Field(default="Отсутствует")
+    quantity: int
+    price: float
+    discount: Optional[int] = Field(default=0, le=100, ge=0)
+
+class RoomRequest(RoomDefault):
+    additionals_ids: Optional[list[int]] = Field(default_factory=list)
 
 
-class FullRoomData(Room):
+class FullRoomData(RoomDefault):
     id: int
-    hotel_id: int = Field(description="ID отеля", example=1)
+    hotel_id: int
     discounted_price: float
 
 class RoomDataWithEmptyRooms(FullRoomData):
@@ -21,8 +25,12 @@ class RoomDataWithEmptyRooms(FullRoomData):
 
 
 class RoomOptional(BasePydanticModel):
-    title: str | None = Field(default=None, description="Название номера", example="Стандарт")
-    description: str | None = Field(description="Описание номера", example="Номер в отеле в центре Москвы", default=None)
-    quantity: int | None = Field(description="Количество номеров", example=10, default=None)
-    price: float | None = Field(description="Цена", example=1000.00, default=None)
-    discount: int | None = Field(default=0, le=100, ge=0, description="Скидка", example=10)
+    title: Optional[str] = Field(default="Отсутствует")
+    description: Optional[str] = Field(default="Отсутствует")
+    quantity: Optional[int] = Field(default=0)
+    price: Optional[float] = Field(default=0.0)
+    discount: Optional[int] = Field(default=0)
+
+class FullRoomOptional(RoomOptional):
+    additionals_ids: Optional[list[int]] = Field(default_factory=list)
+    
