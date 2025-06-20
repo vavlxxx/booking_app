@@ -11,13 +11,15 @@ class RoomDefault(BasePydanticModel):
     price: float
     discount: Optional[int] = Field(default=0, le=100, ge=0)
 
+class RoomAdd(RoomDefault):
+    hotel_id: int
+
 class RoomRequest(RoomDefault):
     additionals_ids: Optional[list[int]] = Field(default_factory=list)
 
 
-class FullRoomData(RoomDefault):
+class FullRoomData(RoomAdd):
     id: int
-    hotel_id: int
     discounted_price: float
 
 class RoomDataWithEmptyRooms(FullRoomData):

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, Path
 
-from src.schemas.rooms import RoomRequest, FullRoomOptional
+from src.schemas.rooms import RoomAdd, RoomRequest, FullRoomOptional
 from src.schemas.additionals import RoomsAdditionalsRequest
 from src.helpers.rooms import ROOM_EXAMPLES
 
@@ -44,8 +44,9 @@ async def create_room(
     room_data: RoomRequest = Body(
         description="Данные о номере отеля",
         openapi_examples=ROOM_EXAMPLES
-)):
-    room = await db.rooms.add(room_data, hotel_id=hotel_id)
+)): 
+    _room_data = RoomAdd(**room_data.model_dump(exclude={"additionals_ids"}), hotel_id=hotel_id)
+    room = await db.rooms.add(_room_data)
 
     additionals = [
         RoomsAdditionalsRequest(
