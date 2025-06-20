@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/{hotel_id}/rooms", summary="Получить все номера определённого отеля")
+@router.get("/{hotel_id}/rooms", summary="Получить все доступные номера отеля за указанный период")
 async def get_rooms_by_hotel(
     db: DBDep,
     dates: DateDep,
@@ -28,12 +28,15 @@ async def get_rooms_by_hotel(
     return rooms
 
 
-@router.get("/{hotel_id}/rooms/{room_id}", summary="Получить конкретный номер отеля")
+@router.get("/{hotel_id}/rooms/{room_id}", summary="Получить данные конкретного номера отеля")
 async def get_room_by_id(
     db: DBDep,
     ids: RoomWithIdsDep
 ):
-    room = await db.rooms.check_existence(hotel_id=ids.hotel_id, id=ids.room_id)
+    room = await db.rooms.get_one_or_none_with_rel(
+        hotel_id=ids.hotel_id, 
+        id=ids.room_id
+    )
     return room
 
 

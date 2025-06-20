@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body
 
-from src.schemas.bookings import BookingRequest, BookingWIthUser
+from src.schemas.bookings import BookingAdd, BookingRequest
 from src.helpers.bookings import BOOKING_EXAMPLES
 
 from src.dependencies.db import DBDep
@@ -16,9 +16,18 @@ async def create_booking(
     booking_data: BookingRequest = Body(
         description="Данные о бронировании", 
         openapi_examples=BOOKING_EXAMPLES
-)):  
-    new_booking_data = BookingWIthUser(**booking_data.model_dump(), user_id=user_id)
-    booking = await db.bookings.add(new_booking_data)
+)): 
+    room = await db.rooms.get_one_or_none(
+        id=booking_data.room_id
+    )
+
+    _booking_data = BookingAdd(
+        **booking_data.model_dump(), 
+        user_id=user_id,
+        price=room.discounted_price
+    )
+
+    booking = await db.bookings.add(_booking_data)
     await db.commit()
     return booking
 

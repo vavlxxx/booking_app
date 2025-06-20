@@ -1,4 +1,5 @@
 from datetime import date
+
 from sqlalchemy import func, select
 
 from src.models.bookings import BookingsOrm
@@ -24,15 +25,8 @@ def rooms_data_to_booking(
 
     rooms_left = (
         select(
-            RoomsOrm.id, 
-            RoomsOrm.hotel_id,
-            RoomsOrm.title,
-            RoomsOrm.description,
-            RoomsOrm.price,
-            RoomsOrm.quantity,
-            (RoomsOrm.quantity - func.coalesce(rooms_count.c.booked_rooms, 0)).label("empty"),
-            RoomsOrm.discount,
-            RoomsOrm.discounted_price,
+            RoomsOrm.id,
+            (RoomsOrm.quantity - func.coalesce(rooms_count.c.booked_rooms, 0)).label("empty")
         )
         .select_from(RoomsOrm)
         .outerjoin(rooms_count, RoomsOrm.id == rooms_count.c.room_id)

@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", summary="Получить список отелей")
+@router.get("/", summary="Получить список отелей со свободными номерами за указанный период")
 async def get_hotels(
     pagination: PaginationDep, 
     hotel_filter_data: HoteParamsDep,
@@ -41,7 +41,7 @@ async def get_hotel(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля", example=1)
 ):
-    hotel = await db.hotels.check_existence(id=hotel_id)
+    hotel = await db.hotels.get_one_or_none(id=hotel_id)
     return hotel
 
 

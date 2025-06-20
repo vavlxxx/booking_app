@@ -35,7 +35,7 @@ async def register_user(
     return {"status": "OK", "data": user}
 
 
-@router.post("/login", summary="Авторизоваться")
+@router.post("/login", summary="Пройти аутентификацию")
 async def login_user(
     db: DBDep,
     response: Response = Response(status_code=200),
@@ -55,12 +55,12 @@ async def login_user(
     return {"status": "OK", "access_token": access_token}
 
 
-@router.get("/profile", summary="Получить профиль")
+@router.get("/profile", summary="Получить профиль аутентифицированного пользователя")
 async def only_auth(
         user_id: UserIdDep,
         db: DBDep
 ):
-        user = await db.auth.check_existence(id=user_id)
+        user = await db.auth.get_one_or_none(id=user_id)
         return user
 
 

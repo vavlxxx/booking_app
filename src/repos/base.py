@@ -41,8 +41,8 @@ class BaseRepository:
         await self.session.execute(add_obj_stmt)
 
 
-    async def add(self, data: BasePydanticModel):
-        add_obj_stmt = insert(self.model).values(**data.model_dump()).returning(self.model)
+    async def add(self, data: BasePydanticModel, **params):
+        add_obj_stmt = insert(self.model).values(**data.model_dump(), **params).returning(self.model)
         result = await self.session.execute(add_obj_stmt)
         obj = result.scalars().one()
         return self.schema.model_validate(obj)

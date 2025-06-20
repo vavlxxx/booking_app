@@ -1,6 +1,7 @@
 from typing import Optional
 from pydantic import Field
 
+from schemas.additionals import AdditionalsData
 from src.schemas.base import BasePydanticModel 
 
 
@@ -17,14 +18,12 @@ class RoomAdd(RoomDefault):
 class RoomRequest(RoomDefault):
     additionals_ids: Optional[list[int]] = Field(default_factory=list)
 
-
 class FullRoomData(RoomAdd):
     id: int
     discounted_price: float
 
-class RoomDataWithEmptyRooms(FullRoomData):
-    empty: int
-
+class RoomsWithRels(FullRoomData):
+    additionals: list[AdditionalsData]
 
 class RoomOptional(BasePydanticModel):
     title: Optional[str] = Field(default="Отсутствует")

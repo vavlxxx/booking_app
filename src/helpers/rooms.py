@@ -6,7 +6,8 @@ ROOM_EXAMPLES = {
             "description": "Уютный номер с одной двуспальной кроватью, кондиционером и бесплатным Wi-Fi",
             "quantity": 15,
             "price": 3500.00,
-            "discount": 10
+            "discount": 10,
+            "additional_ids": []
         }
     },
     "DELUXE_SUITE": {
@@ -16,7 +17,8 @@ ROOM_EXAMPLES = {
             "description": "Просторный номер с гостиной зоной, мини-баром и панорамным видом на город",
             "quantity": 5,
             "price": 8500.00,
-            "discount": 15
+            "discount": 15,
+            "additional_ids": []
         }
     },
     "FAMILY_ROOM": {
@@ -26,7 +28,8 @@ ROOM_EXAMPLES = {
             "description": "Большой номер с двумя кроватями и диваном, идеально подходит для семей с детьми",
             "quantity": 8,
             "price": 5200.00,
-            "discount": 12
+            "discount": 12,
+            "additional_ids": []
         }
     },
     "ECONOMY_ROOM": {
@@ -36,7 +39,8 @@ ROOM_EXAMPLES = {
             "description": "Бюджетный вариант с базовыми удобствами для экономных путешественников",
             "quantity": 20,
             "price": 2100.00,
-            "discount": 5
+            "discount": 5,
+            "additional_ids": []
         }
     },
     "PRESIDENTIAL_SUITE": {
@@ -46,7 +50,8 @@ ROOM_EXAMPLES = {
             "description": "Роскошный номер с джакузи, камином и собственной террасой",
             "quantity": 2,
             "price": 15000.00,
-            "discount": 20
+            "discount": 20,
+            "additional_ids": []
         }
     },
     "BUSINESS_ROOM": {
@@ -56,7 +61,8 @@ ROOM_EXAMPLES = {
             "description": "Номер для деловых путешественников с рабочим столом и конференц-зоной",
             "quantity": 12,
             "price": 5800.00,
-            "discount": 14
+            "discount": 14,
+            "additional_ids": []
         }
     },
     "STUDIO_APARTMENT": {
@@ -66,7 +72,8 @@ ROOM_EXAMPLES = {
             "description": "Номер-студия с мини-кухней, рабочей зоной и современным дизайном",
             "quantity": 10,
             "price": 4300.00,
-            "discount": 8
+            "discount": 8,
+            "additional_ids": []
         }
     },
     "ROMANTIC_ROOM": {
@@ -76,7 +83,8 @@ ROOM_EXAMPLES = {
             "description": "Уютный номер для пар с круглой кроватью, шампанским и лепестками роз",
             "quantity": 4,
             "price": 7200.00,
-            "discount": 16
+            "discount": 16,
+            "additional_ids": []
         }
     },
     "PENTHOUSE": {
@@ -86,7 +94,8 @@ ROOM_EXAMPLES = {
             "description": "Эксклюзивный номер на верхнем этаже с панорамными окнами и собственным лифтом",
             "quantity": 1,
             "price": 18500.00,
-            "discount": 25
+            "discount": 25,
+            "additional_ids": []
         }
     },
     "SEA_VIEW_ROOM": {
@@ -96,7 +105,8 @@ ROOM_EXAMPLES = {
             "description": "Прекрасный номер с балконом и захватывающим видом на океан",
             "quantity": 6,
             "price": 8900.00,
-            "discount": 18
+            "discount": 18,
+            "additional_ids": []
         }
     }
 }
