@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Body, HTTPException, Response
 
 from src.services.auth import AuthService
-from src.api.dependencies import UserIdDep, DBDep
+
+from src.dependencies.db import DBDep
+from src.dependencies.auth import UserIdDep
+
 from src.schemas.auth import (
      UserRegister, 
      UserRegisterRequest, 

@@ -6,11 +6,10 @@ from fastapi import (
 
 from src.schemas.hotels import HotelAdd, HotelNullable
 from src.helpers.hotels import HOTEL_EXAMPLES
-from src.api.dependencies import (
-    PaginationDep, 
-    HoteParamslDep, 
-    DBDep
-)
+
+from src.dependencies.hotels import HoteParamsDep, PaginationDep
+from src.dependencies.db import DBDep
+from src.dependencies.rooms import DateDep
 
 
 router = APIRouter(
@@ -22,16 +21,17 @@ router = APIRouter(
 @router.get("/", summary="Получить список отелей")
 async def get_hotels(
     pagination: PaginationDep, 
-    hotel_filter_data: HoteParamslDep,
+    hotel_filter_data: HoteParamsDep,
+    dates: DateDep,
     db: DBDep
 ):
     hotels = await db.hotels.get_all_filtered_by_time(
         location=hotel_filter_data.location,
         title=hotel_filter_data.title,
         limit=pagination.per_page,
-        offset=(pagination.page - 1) * pagination.per_page,
-        date_from=hotel_filter_data.date_from,
-        date_to=hotel_filter_data.date_to
+        offset=pagination.offset,
+        date_from=dates.date_from,
+        date_to=dates.date_to
     )    
     return hotels
 

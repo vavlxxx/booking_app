@@ -1,17 +1,17 @@
 from sqlalchemy import delete, insert, select
 from src.models.additionals import AdditionalsOrm, RoomsAdditionalsOrm
-from src.schemas.additionals import Additional, RoomAdditional
+from src.schemas.additionals import AdditionalsData, RoomsAdditionalsData
 from src.repos.base import BaseRepository
 
 
 class AdditionalsRepository(BaseRepository):
     model = AdditionalsOrm
-    schema = Additional
+    schema = AdditionalsData
 
 
 class RoomsAdditionalsRepository(BaseRepository):
     model = RoomsAdditionalsOrm
-    schema = RoomAdditional
+    schema = RoomsAdditionalsData
     
     
     async def update_all(self, room_id: int, additionals_ids: list[int]):

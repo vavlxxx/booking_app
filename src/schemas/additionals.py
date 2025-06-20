@@ -2,20 +2,20 @@ from typing import Optional
 from src.schemas.base import BasePydanticModel
 
 
-class AdditionalRequest(BasePydanticModel):
+class AdditionalsRequest(BasePydanticModel):
     name: str
     description: Optional[str]
 
 
-class Additional(AdditionalRequest):
+class AdditionalsData(AdditionalsRequest):
     id: int
 
 
-class RoomAdditionalRequest(BasePydanticModel):
+class RoomsAdditionalsRequest(BasePydanticModel):
     additional_id: int
     room_id: int
 
 
-class RoomAdditional(RoomAdditionalRequest):
+class RoomsAdditionalsData(RoomsAdditionalsRequest):
     id: int
     

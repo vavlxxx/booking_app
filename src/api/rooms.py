@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Body, Path
 
-from src.api.dependencies import RoomWithIdsDep, DBDep, DateDep
 from src.schemas.rooms import RoomRequest, FullRoomOptional
-from src.schemas.additionals import RoomAdditionalRequest
+from src.schemas.additionals import RoomsAdditionalsRequest
 from src.helpers.rooms import ROOM_EXAMPLES
+
+from src.dependencies.rooms import RoomWithIdsDep, DateDep
+from src.dependencies.db import DBDep
+
 
 router = APIRouter(
     prefix="/hotels", 
@@ -45,7 +48,7 @@ async def create_room(
     room = await db.rooms.add(room_data, hotel_id=hotel_id)
 
     additionals = [
-        RoomAdditionalRequest(
+        RoomsAdditionalsRequest(
             additional_id=addit_id, 
             room_id=room.id
         ) for addit_id in room_data.additionals_ids]

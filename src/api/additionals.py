@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Body
 
-from src.api.dependencies import DBDep
-from src.schemas.additionals import AdditionalRequest
+from src.schemas.additionals import AdditionalsRequest
 from src.helpers.additionals import ADDITIONALS_EXAMPLES
+
+from src.dependencies.db import DBDep
 
 
 router = APIRouter(
@@ -22,7 +23,7 @@ async def get_additionals(
 @router.post("/", summary="Добавить новое удобство")
 async def create_additional(
     db: DBDep,
-    additional_data: AdditionalRequest = Body(
+    additional_data: AdditionalsRequest = Body(
         description="Название удобства", 
         openapi_examples=ADDITIONALS_EXAMPLES
     )

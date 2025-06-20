@@ -5,8 +5,8 @@ from src.schemas.base import BasePydanticModel
 
 class BookingRequest(BasePydanticModel):
     room_id: int = Field(description="ID номера", example=1, ge=1)
-    date_from: FutureDate = Field(description="Дата заезда", example="2030-06-17")
-    date_to: FutureDate = Field(description="Дата выезда", example="2030-06-20")
+    date_from: FutureDate
+    date_to: FutureDate
 
     @model_validator(mode="after")
     def validate_date(self) -> str:
