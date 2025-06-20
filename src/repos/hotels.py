@@ -5,12 +5,13 @@ from src.schemas.hotels import Hotel
 from src.models.hotels import HotelsOrm
 from src.repos.base import BaseRepository
 from src.repos.utils import rooms_data_to_booking
+from src.repos.mappers.mappers import HotelsMapper
 
 
 class HotelsRepository(BaseRepository):
 
     model = HotelsOrm
-    schema = Hotel
+    mapper = HotelsMapper
 
     async def get_all_filtered_by_time(
             self, 
@@ -43,5 +44,5 @@ class HotelsRepository(BaseRepository):
 
         hotels = hotels.limit(limit).offset(offset)
         result = await self.session.execute(hotels)
-        filtered_hotels_data = [self.schema.model_validate(hotel) for hotel in result.scalars().all()]
+        filtered_hotels_data = [self.mapper.map_to_domain_entity(hotel) for hotel in result.scalars().all()]
         return filtered_hotels_data

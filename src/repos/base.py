@@ -1,12 +1,12 @@
 from sqlalchemy import delete, select, insert, update
 
 from src.schemas.base import BasePydanticModel
-
+from src.repos.mappers.base import DataMapper
 
 class BaseRepository:
 
     model = None
-    schema: BasePydanticModel = None
+    mapper: DataMapper = None
 
 
     def __init__(self, session):
@@ -20,7 +20,7 @@ class BaseRepository:
             .filter_by(**filter_by)
         )
         result = await self.session.execute(query)
-        return [self.schema.model_validate(obj) for obj in result.scalars().all()]
+        return [self.mapper.map_to_domain_entity(obj) for obj in result.scalars().all()]
 
 
     async def get_all(self) -> list[BasePydanticModel]:
@@ -33,7 +33,7 @@ class BaseRepository:
         obj = result.scalars().one_or_none()
         if obj is None:
             return None
-        return self.schema.model_validate(obj) 
+        return self.mapper.map_to_domain_entity(obj) 
 
 
     async def add_bulk(self, data: list[BasePydanticModel]):
@@ -45,7 +45,7 @@ class BaseRepository:
         add_obj_stmt = insert(self.model).values(**data.model_dump(), **params).returning(self.model)
         result = await self.session.execute(add_obj_stmt)
         obj = result.scalars().one()
-        return self.schema.model_validate(obj)
+        return self.mapper.map_to_domain_entity(obj)
 
 
     async def edit(self, data: BasePydanticModel, exclude_unset=True, exclude_fields=None, **filter_by):

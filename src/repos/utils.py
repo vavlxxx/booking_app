@@ -26,6 +26,7 @@ def rooms_data_to_booking(
     rooms_left = (
         select(
             RoomsOrm.id,
+            RoomsOrm.hotel_id,
             (RoomsOrm.quantity - func.coalesce(rooms_count.c.booked_rooms, 0)).label("empty")
         )
         .select_from(RoomsOrm)
