@@ -1,8 +1,8 @@
 from datetime import date
 from sqlalchemy import select, func
 
-from src.schemas.hotels import Hotel
 from src.models.hotels import HotelsOrm
+
 from src.repos.base import BaseRepository
 from src.repos.utils import rooms_data_to_booking
 from src.repos.mappers.mappers import HotelsMapper
