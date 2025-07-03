@@ -1,11 +1,11 @@
 import json
 
 from fastapi import APIRouter, Body
+from fastapi_cache.decorator import cache
 
 from src.schemas.additionals import AdditionalsRequest
 from src.helpers.additionals import ADDITIONALS_EXAMPLES
 from src.dependencies.db import DBDep
-from src.bootstrap import redis_manager
 
 
 router = APIRouter(
@@ -15,19 +15,11 @@ router = APIRouter(
 
 
 @router.get("/", summary="Получить список всех удобств")
+@cache(expire=60)
 async def get_additionals(
     db: DBDep
 ):
-    additionals_from_redis = await redis_manager.get("additionals")
-    if not additionals_from_redis:
-        additionals = await db.additionals.get_all()
-        additionals_dict: list[dict] = [a.model_dump() for a in additionals]
-        additionals_json = json.dumps(additionals_dict)
-        await redis_manager.set("additionals", additionals_json, 60)
-        return additionals
-
-    additionals_dicts = json.loads(additionals_from_redis)
-    return additionals_dicts
+    return await db.additionals.get_all()
 
 
 @router.post("/", summary="Добавить новое удобство")

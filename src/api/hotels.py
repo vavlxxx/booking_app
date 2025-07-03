@@ -3,6 +3,7 @@ from fastapi import (
     Body,
     Path,
 )
+from fastapi_cache.decorator import cache
 
 from src.schemas.hotels import HotelAdd, HotelNullable
 from src.helpers.hotels import HOTEL_EXAMPLES
@@ -19,6 +20,7 @@ router = APIRouter(
 
 
 @router.get("/", summary="Получить список отелей со свободными номерами за указанный период")
+@cache(expire=120)
 async def get_hotels(
     pagination: PaginationDep, 
     hotel_filter_data: HoteParamsDep,
