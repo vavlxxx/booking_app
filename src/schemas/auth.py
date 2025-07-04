@@ -4,15 +4,15 @@ from src.schemas.base import BasePydanticModel
 
 
 class _UserData(BasePydanticModel):
-    first_name: str = Field(description="Имя", example="John")
-    last_name: str = Field(description="Фамилия", example="Doe")
-    gender: str = Field(description="Пол", example="M", pattern="^[МЖ]$")
-    birthday: PastDate = Field(description="Дата рождения", example="1970-01-01")
+    first_name: str = Field(description="Имя")
+    last_name: str = Field(description="Фамилия")
+    gender: str = Field(description="Пол", pattern="^[МЖ]$")
+    birthday: PastDate = Field(description="Дата рождения")
 
 
 class UserLoginRequest(BasePydanticModel):
-    email: EmailStr = Field(description="Электронная почта", example="mymail@example.com")
-    password: str = Field(description=" Пароль", example="qwerty123")
+    email: EmailStr = Field(description="Электронная почта")
+    password: str = Field(description=" Пароль")
 
 
 class UserRegisterRequest(UserLoginRequest, _UserData):

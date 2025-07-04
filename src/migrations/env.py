@@ -11,13 +11,8 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from src.config import settings
-
 from src.db import Base
-from src.models.hotels import HotelsOrm
-from src.models.rooms import RoomsOrm
-from src.models.users import UsersOrm
-from src.models.bookings import BookingsOrm
-from src.models.additionals import AdditionalsOrm, RoomsAdditionalsOrm
+from src.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

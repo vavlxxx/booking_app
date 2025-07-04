@@ -6,7 +6,7 @@ from src.schemas.base import BasePydanticModel
 
 
 class BookingRequest(BasePydanticModel):
-    room_id: int = Field(description="ID номера", example=1, ge=1)
+    room_id: int = Field(description="ID номера", ge=1)
     date_from: FutureDate | date
     date_to: FutureDate | date
 
