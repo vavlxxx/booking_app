@@ -67,9 +67,10 @@ async def register_user(async_main, ac):
     )
     assert resp
     assert resp.status_code == 200
+    assert isinstance(resp.json(), dict)
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 async def authenticated_ac(register_user, ac):
     resp = await ac.post(
         "/auth/login", 

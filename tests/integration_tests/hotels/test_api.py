@@ -1,12 +1,15 @@
+from datetime import date, timedelta
+
 from httpx import AsyncClient
 
-from src.utils.db_manager import DBManager
 
-
-async def test_get_hotels(ac: AsyncClient, db: DBManager):
+async def test_get_hotels(ac: AsyncClient):
     response = await ac.get(
         url=f"/hotels/",
-        params={"date_from": "2023-01-01", "date_to": "2023-01-10"}
+        params={
+            "date_from": (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), 
+            "date_to": (date.today()+timedelta(days=10)).strftime("%Y-%m-%d")
+        }
     )
     assert response.status_code == 200
     assert response.json() is not None
