@@ -10,3 +10,4 @@ async def test_get_hotels(ac: AsyncClient, db: DBManager):
     )
     assert response.status_code == 200
     assert response.json() is not None
+    assert isinstance(response.json(), list)

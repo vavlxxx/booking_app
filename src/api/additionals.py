@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body
 
-from src.utils.redis_cache import cache
+from fastapi_cache.decorator import cache
 from src.schemas.additionals import AdditionalsRequest
 from src.helpers.additionals import ADDITIONALS_EXAMPLES
 from src.dependencies.db import DBDep
@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get("/", summary="Получить список всех удобств")
-# @cache(expire=60)
+@cache(expire=60)
 async def get_additionals(
     db: DBDep
 ):  

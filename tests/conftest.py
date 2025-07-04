@@ -1,5 +1,8 @@
-import pytest
+from unittest import mock
 
+mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda x: x).start()
+
+import pytest
 from httpx import AsyncClient, ASGITransport
 
 from src.dependencies.db import get_db
@@ -7,7 +10,6 @@ from src.main import app
 from src.db import Base, engine_null_pool, async_session_maker_null_pool
 from src.models import *
 from src.config import get_settings
-
 from src.utils.db_manager import DBManager
 from src.utils.helpers import get_hotel_examples, get_room_examples
 
@@ -65,4 +67,24 @@ async def register_user(async_main, ac):
     )
     assert resp
     assert resp.status_code == 200
-        
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def authenticated_ac(register_user, ac):
+    resp = await ac.post(
+        "/auth/login", 
+        json={
+            "email": "john.johnson@techcorp.com",
+            "password": "DevPassword456"
+        }
+    )
+    assert resp is not None
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, dict)
+
+    access_token = data.get("access_token") 
+    assert access_token is not None
+    cookie_token = ac.cookies.get("access_token")
+    assert cookie_token == access_token
+    yield ac

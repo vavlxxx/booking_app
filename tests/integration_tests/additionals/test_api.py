@@ -1,20 +1,28 @@
 from httpx import AsyncClient
 
-from src.utils.db_manager import DBManager
 
-
-async def test_add_additionals(ac: AsyncClient, db: DBManager):
+async def test_add_additionals(ac: AsyncClient):
+    title = "Бесплатный Wi-Fi"
+    descr = "Высокоскоростной беспроводный интернет во всех номерах"
     response = await ac.post(
         url=f"/additionals/",
         json={
-            "name": "Бесплатный Wi-Fi",
-            "description": "Высокоскоростной беспроводной интернет во всех номерах"
+            "name": title,
+            "description": descr
         }
     )
+    data = response.json()
     assert response.status_code == 200
+    assert data is not None
+    assert isinstance(data, dict)
+    assert data["data"]["name"] == title
+    assert data["data"]["description"] == descr
+    
     
 
-async def test_get_additionals(ac: AsyncClient, db: DBManager):
+async def test_get_additionals(ac: AsyncClient):
     response = await ac.get(url=f"/additionals/")
+    data = response.json()
     assert response.status_code == 200
-    assert response.json() is not None
+    assert data is not None
+    assert isinstance(data, list)

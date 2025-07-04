@@ -1,14 +1,16 @@
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
 from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI
 
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).parent.parent))
 
 from fastapi_cache import FastAPICache
+# from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
 
 from src.api.hotels import router as router_hotels
@@ -17,6 +19,8 @@ from src.api.rooms import router as router_rooms
 from src.api.bookings import router as router_bookings
 from src.api.additionals import router as router_additionals
 from src.api.images import router as router_images
+
+# from src.config import get_settings
 from src.helpers.docs import router as router_docs
 from src.bootstrap import redis_manager
 
@@ -29,6 +33,10 @@ async def lifespan(app: FastAPI):
     yield 
     await redis_manager.close()
     print("Application is shutting down...")
+
+# if get_settings().MODE == "TEST":
+#     FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+
 
 app = FastAPI(
     docs_url=None,
