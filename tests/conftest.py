@@ -1,3 +1,5 @@
+from typing import AsyncGenerator
+
 import pytest
 
 from httpx import AsyncClient, ASGITransport
@@ -17,7 +19,13 @@ def check_test_env():
     assert get_settings().MODE == "TEST"
 
 
-# function, module, package, session 
+@pytest.fixture()
+async def db():
+    async with DBManager(session_factory=async_session_maker_null_pool) as db:
+        yield db
+
+
+# function (default), module, package, session 
 @pytest.fixture(scope="session", autouse=True)
 async def async_main(check_test_env) -> None:
     async with engine_null_pool.begin() as conn:
@@ -30,24 +38,26 @@ async def async_main(check_test_env) -> None:
         await db.commit()
 
 
+@pytest.fixture(scope="session")
+async def ac(async_main):
+    app_ = ASGITransport(app=app)
+    async with AsyncClient(transport=app_, base_url="http://test") as ac:
+        yield ac
+
 
 @pytest.fixture(scope="session", autouse=True)
-async def register_user(async_main):
-    app_ = ASGITransport(app=app)
-    async with AsyncClient(transport=app_, base_url="http://test") as client:
-        resp = await client.post(
-            "/auth/register", 
-            json={
-                "email": "john.johnson@techcorp.com",
-                "password": "DevPassword456",
-                "first_name": "Джон",
-                "last_name": "Джонсон",
-                "birthday": "1990-07-22",
-                "gender": "М"
-            }
-        )
-        
-        assert resp
-        assert resp.status_code == 200
-        
+async def register_user(async_main, ac):
+    resp = await ac.post(
+        "/auth/register", 
+        json={
+            "email": "john.johnson@techcorp.com",
+            "password": "DevPassword456",
+            "first_name": "Джон",
+            "last_name": "Джонсон",
+            "birthday": "1990-07-22",
+            "gender": "М"
+        }
+    )
+    assert resp
+    assert resp.status_code == 200
         
