@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.get("/", summary="Получить список отелей со свободными номерами за указанный период")
-@cache(expire=120)
+# @cache(expire=120)
 async def get_hotels(
     pagination: PaginationDep, 
     hotel_filter_data: HoteParamsDep,

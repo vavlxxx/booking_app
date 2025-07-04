@@ -1,9 +1,8 @@
-from typing import AsyncGenerator
-
 import pytest
 
 from httpx import AsyncClient, ASGITransport
 
+from src.dependencies.db import get_db
 from src.main import app
 from src.db import Base, engine_null_pool, async_session_maker_null_pool
 from src.models import *
@@ -19,9 +18,15 @@ def check_test_env():
     assert get_settings().MODE == "TEST"
 
 
+async def get_db_null_pool():
+    async with DBManager(session_factory=async_session_maker_null_pool) as db:
+        yield db
+app.dependency_overrides[get_db] = get_db_null_pool
+
+
 @pytest.fixture()
 async def db():
-    async with DBManager(session_factory=async_session_maker_null_pool) as db:
+    async for db in get_db_null_pool():
         yield db
 
 

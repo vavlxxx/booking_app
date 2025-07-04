@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get("/", summary="Получить список всех удобств")
-@cache(expire=60)
+# @cache(expire=60)
 async def get_additionals(
     db: DBDep
 ):  
