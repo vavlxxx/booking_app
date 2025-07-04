@@ -13,4 +13,3 @@ async def test_add_hotel(db):
     hotel_schema = HotelAdd(**hotel_data)
     hotel = await db.hotels.add(hotel_schema)
     await db.commit()
-    print(f"Hotel added: {hotel}")
