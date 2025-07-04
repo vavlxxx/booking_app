@@ -1,6 +1,10 @@
+.env
+.test.env
+celery*
+
+.vscode/
+media/
+
 .venv/
 __pycache__/
-.vscode/
-.env
-media/
-celery*
+.pytest_cache/

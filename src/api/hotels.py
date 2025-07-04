@@ -41,7 +41,7 @@ async def get_hotels(
 @router.get("/{hotel_id}", summary="Получить отель")
 async def get_hotel(
     db: DBDep,
-    hotel_id: int = Path(description="ID отеля", example=1)
+    hotel_id: int = Path(description="ID отеля")
 ):
     hotel = await db.hotels.get_one_or_none(id=hotel_id)
     return hotel
@@ -63,7 +63,7 @@ async def create_hotel(
 @router.delete("/{hotel_id}", summary="Удалить отель")
 async def delete_hotel(
     db: DBDep,
-    hotel_id: int = Path(description="ID отеля", example=1)
+    hotel_id: int = Path(description="ID отеля")
 ):
     await db.hotels.delete(id=hotel_id)
     await db.commit()
@@ -73,7 +73,7 @@ async def delete_hotel(
 @router.put("/{hotel_id}", summary="Полностью обновить данные отеля")
 async def update_hotel_put(
     db: DBDep,
-    hotel_id: int = Path(description="ID отеля", example=1),
+    hotel_id: int = Path(description="ID отеля"),
     hotel_data: HotelAdd = Body(
         description="Данные об отеле", 
         openapi_examples=HOTEL_EXAMPLES
@@ -87,7 +87,7 @@ async def update_hotel_put(
 @router.patch("/{hotel_id}", summary="Частично обновить данные отеля")
 async def update_hotel_patch(
     db: DBDep,
-    hotel_id: int = Path(description="ID отеля", example=1),
+    hotel_id: int = Path(description="ID отеля"),
     hotel_data: HotelNullable = Body(
         description="Данные об отеле", 
         openapi_examples=HOTEL_EXAMPLES

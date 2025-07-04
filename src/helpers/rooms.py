@@ -7,7 +7,7 @@ ROOM_EXAMPLES = {
             "quantity": 15,
             "price": 3500.00,
             "discount": 10,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "DELUXE_SUITE": {
@@ -18,7 +18,7 @@ ROOM_EXAMPLES = {
             "quantity": 5,
             "price": 8500.00,
             "discount": 15,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "FAMILY_ROOM": {
@@ -29,7 +29,7 @@ ROOM_EXAMPLES = {
             "quantity": 8,
             "price": 5200.00,
             "discount": 12,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "ECONOMY_ROOM": {
@@ -40,7 +40,7 @@ ROOM_EXAMPLES = {
             "quantity": 20,
             "price": 2100.00,
             "discount": 5,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "PRESIDENTIAL_SUITE": {
@@ -51,7 +51,7 @@ ROOM_EXAMPLES = {
             "quantity": 2,
             "price": 15000.00,
             "discount": 20,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "BUSINESS_ROOM": {
@@ -62,7 +62,7 @@ ROOM_EXAMPLES = {
             "quantity": 12,
             "price": 5800.00,
             "discount": 14,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "STUDIO_APARTMENT": {
@@ -73,7 +73,7 @@ ROOM_EXAMPLES = {
             "quantity": 10,
             "price": 4300.00,
             "discount": 8,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "ROMANTIC_ROOM": {
@@ -84,7 +84,7 @@ ROOM_EXAMPLES = {
             "quantity": 4,
             "price": 7200.00,
             "discount": 16,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "PENTHOUSE": {
@@ -95,7 +95,7 @@ ROOM_EXAMPLES = {
             "quantity": 1,
             "price": 18500.00,
             "discount": 25,
-            "additional_ids": []
+            "additionals_ids": []
         }
     },
     "SEA_VIEW_ROOM": {
@@ -106,7 +106,7 @@ ROOM_EXAMPLES = {
             "quantity": 6,
             "price": 8900.00,
             "discount": 18,
-            "additional_ids": []
+            "additionals_ids": []
         }
     }
 }

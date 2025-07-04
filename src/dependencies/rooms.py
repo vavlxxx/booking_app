@@ -11,8 +11,8 @@ class DatesParams(BasePydanticModel):
     date_to: date
 
 def get_dates_params(
-    date_from: Annotated[date, Query(description="Дата въезда", example=date(2025, 8, 1))],
-    date_to: Annotated[date, Query(description="Дата выезда", example=date(2025, 8, 10))]
+    date_from: Annotated[date, Query(description="Дата въезда")],
+    date_to: Annotated[date, Query(description="Дата выезда")]
 ):
     return DatesParams(date_from=date_from, date_to=date_to)
 
@@ -24,8 +24,8 @@ class RoomWithIds(BasePydanticModel):
     hotel_id: int
 
 def get_rooms_with_ids(
-    room_id: int = Path(description="ID номера", example=1), 
-    hotel_id: int = Path(description="ID отеля", example=1)
+    room_id: int = Path(description="ID номера"), 
+    hotel_id: int = Path(description="ID отеля")
 ):
     return RoomWithIds(room_id=room_id, hotel_id=hotel_id)
 

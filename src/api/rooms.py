@@ -18,7 +18,7 @@ router = APIRouter(
 async def get_rooms_by_hotel(
     db: DBDep,
     dates: DateDep,
-    hotel_id: int = Path(description="ID отеля", example=1)
+    hotel_id: int = Path(description="ID отеля")
 ):
     rooms = await db.rooms.get_all_filtered_by_time(
         hotel_id=hotel_id,
@@ -43,7 +43,7 @@ async def get_room_by_id(
 @router.post("/{hotel_id}/rooms", summary="Добавить номер для отеля")
 async def create_room(
     db: DBDep,
-    hotel_id: int = Path(description="ID отеля", example=1),
+    hotel_id: int = Path(description="ID отеля"),
     room_data: RoomRequest = Body(
         description="Данные о номере отеля",
         openapi_examples=ROOM_EXAMPLES

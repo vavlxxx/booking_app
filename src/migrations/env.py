@@ -10,14 +10,14 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from src.config import settings
+from src.config import get_settings
 from src.db import Base
 from src.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url", f"{settings.DB_URL}?async_fallback=True")
+config.set_main_option("sqlalchemy.url", f"{get_settings().DB_URL}?async_fallback=True")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

@@ -11,8 +11,8 @@ class HotelParams(BasePydanticModel):
     location: Optional[str]
 
 def get_hotel_params(
-    title: Annotated[str | None, Query(description="Название", example="Hotel Deluxe")] = None,
-    location: Annotated[str | None, Query(description="Адрес", example="г. Москва, ул. Пушкинская, д. 5")] = None,
+    title: Annotated[str | None, Query(description="Название")] = None,
+    location: Annotated[str | None, Query(description="Адрес")] = None,
 ) -> HotelParams:
     return HotelParams(title=title, location=location)
 

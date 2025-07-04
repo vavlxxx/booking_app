@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 
-from src.config import settings
+from src.config import get_settings
 
 
 class AuthService:
@@ -20,18 +20,18 @@ class AuthService:
     def create_access_token(data: dict):
         to_encode = data.copy()
         expire = datetime.now(timezone.utc) + timedelta(
-            minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
+            minutes=get_settings().JWT_ACCESS_TOKEN_EXPIRE_MINUTES
         )
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(
-            to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+            to_encode, get_settings().JWT_SECRET_KEY, algorithm=get_settings().JWT_ALGORITHM
         )
         return encoded_jwt
 
     @staticmethod
     def decode_access_token(access_token) -> dict[str, str]:
         try:
-            return jwt.decode(access_token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+            return jwt.decode(access_token, get_settings().JWT_SECRET_KEY, algorithms=[get_settings().JWT_ALGORITHM])
         except jwt.exceptions.DecodeError:
             raise HTTPException(status_code=401, detail="Неверный токен")
         except jwt.exceptions.ExpiredSignatureError:
