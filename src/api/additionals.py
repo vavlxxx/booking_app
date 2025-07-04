@@ -1,8 +1,6 @@
-import json
-
 from fastapi import APIRouter, Body
-from fastapi_cache.decorator import cache
 
+from src.utils.redis_cache import cache
 from src.schemas.additionals import AdditionalsRequest
 from src.helpers.additionals import ADDITIONALS_EXAMPLES
 from src.dependencies.db import DBDep
@@ -18,7 +16,7 @@ router = APIRouter(
 @cache(expire=60)
 async def get_additionals(
     db: DBDep
-):
+):  
     return await db.additionals.get_all()
 
 

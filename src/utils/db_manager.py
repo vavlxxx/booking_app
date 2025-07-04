@@ -1,4 +1,4 @@
-from repos.additionals import AdditionalsRepository, RoomsAdditionalsRepository
+from src.repos.additionals import AdditionalsRepository, RoomsAdditionalsRepository
 from src.repos.hotels import HotelsRepository
 from src.repos.auth import AuthRepository
 from src.repos.rooms import RoomsRepository

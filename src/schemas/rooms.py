@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import Field
 
-from schemas.additionals import AdditionalsData
+from src.schemas.additionals import AdditionalsData
 from src.schemas.base import BasePydanticModel 
 
 
