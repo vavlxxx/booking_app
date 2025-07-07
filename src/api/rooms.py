@@ -112,9 +112,11 @@ async def update_room_patch(
         hotel_id=ids.hotel_id,
         exclude_fields={"additionals_ids"}
     )
-    await db.rooms_additionals.update_all(
-        room_id=ids.room_id, 
-        additionals_ids=room_data.additionals_ids
-    )
+    _room_data = room_data.model_dump(exclude_unset=True)
+    if "additionals_ids" in _room_data:
+        await db.rooms_additionals.update_all(
+            room_id=ids.room_id, 
+            additionals_ids=room_data.additionals_ids
+        )
     await db.commit()
     return {"status": "OK"}

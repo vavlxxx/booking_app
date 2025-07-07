@@ -23,14 +23,19 @@ class BookingsRepository(BaseRepository):
         return [self.mapper.map_to_domain_entity(obj) for obj in result.scalars().all()]
     
 
-    async def add_booking(self, data: BookingAdd):
+    async def add_booking(
+        self, 
+        booking_data: BookingAdd,
+        hotel_id: int
+    ):
         rooms_data = rooms_data_to_booking(
-            data.date_from, 
-            data.date_to, 
+            booking_data.date_from, 
+            booking_data.date_to,
+            hotel_id
         )
         result = await self.session.execute(rooms_data)
         results = result.scalars().all()
-        if data.room_id not in results:
+        if booking_data.room_id not in results:
             raise HTTPException(status_code=400, detail="Комната полностью занята. Пожалуйста, выберите другую")
         
-        return await super().add(data)
+        return await super().add(booking_data)

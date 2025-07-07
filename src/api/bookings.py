@@ -27,7 +27,10 @@ async def create_booking(
         price=room.discounted_price
     )
 
-    booking = await db.bookings.add_booking(_booking_data)
+    booking = await db.bookings.add_booking(
+        booking_data=_booking_data,
+        hotel_id=room.hotel_id
+    )
     await db.commit()
     return booking
 
