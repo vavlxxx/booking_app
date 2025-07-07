@@ -4,7 +4,7 @@ ROOM_EXAMPLES = {
         "value": {
             "title": "Стандартный номер",
             "description": "Уютный номер с одной двуспальной кроватью, кондиционером и бесплатным Wi-Fi",
-            "quantity": 15,
+            "quantity": 5,
             "price": 3500.00,
             "discount": 10,
             "additionals_ids": []

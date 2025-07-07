@@ -38,4 +38,4 @@ class BookingsRepository(BaseRepository):
         if booking_data.room_id not in results:
             raise HTTPException(status_code=400, detail="Комната полностью занята. Пожалуйста, выберите другую")
         
-        return await super().add(booking_data)
+        return await self.add(booking_data)
