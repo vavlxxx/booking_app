@@ -24,7 +24,7 @@ async def test_create_booking(
     authenticated_ac: AsyncClient
 ):
     response = await authenticated_ac.post(
-        url=f"/bookings/",
+        url="/bookings/",
         json={
             "room_id": room_id,
             "date_from": date_from,
@@ -74,7 +74,7 @@ async def test_add_and_get_bookings(
     delete_all_bookings,
 ):
     response = await authenticated_ac.post(
-        url=f"/bookings/",
+        url="/bookings/",
         json={
             "room_id": room_id,
             "date_from": date_from,
@@ -94,7 +94,7 @@ async def test_add_and_get_bookings(
         assert data["date_from"] == date_from
         assert data["date_to"] == date_to
 
-    response = await authenticated_ac.get(url=f"/bookings/me")
+    response = await authenticated_ac.get(url="/bookings/me")
     assert response.status_code == status_code_for_get
 
     if response.status_code == 200:

@@ -9,5 +9,5 @@ async def test_add_hotel(db: DBManager):
         "description": "Описание отеля",
     }
     hotel_schema = HotelAdd(**hotel_data)
-    hotel = await db.hotels.add(hotel_schema)
+    await db.hotels.add(hotel_schema)
     await db.commit()

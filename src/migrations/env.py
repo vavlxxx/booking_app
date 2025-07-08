@@ -12,7 +12,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from src.config import get_settings
 from src.db import Base
-from src.models import *
+from src.models import * # noqa: F403
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
