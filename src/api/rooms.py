@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Body, Path
+from fastapi.exceptions import HTTPException
 
 from src.schemas.rooms import (
     RoomAdd, 
@@ -9,9 +10,9 @@ from src.schemas.rooms import (
 )
 from src.schemas.additionals import RoomsAdditionalsRequest
 from src.helpers.rooms import ROOM_EXAMPLES
-
 from src.dependencies.rooms import RoomWithIdsDep, DateDep
 from src.dependencies.db import DBDep
+from src.utils.exceptions import DatesMissMatchException, ObjectNotFoundException
 
 
 router = APIRouter(
@@ -25,12 +26,20 @@ async def get_rooms_by_hotel(
     db: DBDep,
     dates: DateDep,
     hotel_id: int = Path(description="ID отеля")
-):
-    rooms = await db.rooms.get_all_filtered_by_time(
-        hotel_id=hotel_id,
-        date_from=dates.date_from,
-        date_to=dates.date_to
-    )
+):  
+    try:
+        await db.hotels.get_one(id=hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
+
+    try:
+        rooms = await db.rooms.get_all_filtered_by_time(
+            hotel_id=hotel_id,
+            date_from=dates.date_from,
+            date_to=dates.date_to
+        )
+    except DatesMissMatchException as ex:
+        raise HTTPException(status_code=422, detail=ex.detail)
     return rooms
 
 
@@ -38,11 +47,19 @@ async def get_rooms_by_hotel(
 async def get_room_by_id(
     db: DBDep,
     ids: RoomWithIdsDep
-):
-    room: RoomsWithRels | None = await db.rooms.get_one_or_none_with_rel(
-        hotel_id=ids.hotel_id, 
-        id=ids.room_id
-    )
+):  
+    try:
+        await db.hotels.get_one(id=ids.hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
+
+    try:
+        room: RoomsWithRels | None = await db.rooms.get_one_with_rel(
+            hotel_id=ids.hotel_id, 
+            id=ids.room_id
+        )
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Номер в указанном отеле не найден")
     return room
 
 
@@ -54,6 +71,11 @@ async def create_room(
         description="Данные о номере отеля",
         openapi_examples=ROOM_EXAMPLES
 )): 
+    try:
+        await db.hotels.get_one(id=hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
+
     _room_data = RoomAdd(**room_data.model_dump(exclude={"additionals_ids"}), hotel_id=hotel_id)
     room: FullRoomData = await db.rooms.add(_room_data) # type: ignore
 
@@ -75,6 +97,16 @@ async def delete_room(
     db: DBDep,
     ids: RoomWithIdsDep
 ):
+    try:
+        await db.hotels.get_one(id=ids.hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
+    
+    try:
+        await db.rooms.get_one(id=ids.room_id, hotel_id=ids.hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Номер в указанном отеле не найден")
+
     await db.rooms.delete(id=ids.room_id, hotel_id=ids.hotel_id)
     await db.commit()
     return {"status": "OK"}
@@ -89,6 +121,11 @@ async def update_room_put(
         openapi_examples=ROOM_EXAMPLES
     )
 ):  
+    try:
+        await db.rooms.get_one(id=ids.room_id, hotel_id=ids.hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Номер не найден")
+
     await db.rooms.edit(
         room_data, 
         id=ids.room_id, 
@@ -112,6 +149,11 @@ async def update_room_patch(
         openapi_examples=ROOM_EXAMPLES
     )
 ):  
+    try:
+        await db.rooms.get_one(id=ids.room_id, hotel_id=ids.hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Номер не найден")
+
     await db.rooms.edit(
         room_data, 
         id=ids.room_id, 

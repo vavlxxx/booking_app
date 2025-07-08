@@ -8,7 +8,7 @@ from src.services.auth import AuthService
 def get_token(request: Request) -> str | None:
     access_token = request.cookies.get("access_token", None)
     if access_token is None:
-        raise HTTPException(status_code=401, detail="Пользователь не аутентифицирован. Пожалуйста, пройдите аутентификацию")
+        raise HTTPException(status_code=401, detail="Пользователь не аутентифицирован")
     return access_token
 
 

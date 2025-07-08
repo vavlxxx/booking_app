@@ -1,4 +1,3 @@
-from typing import cast
 from fastapi import APIRouter, Body, HTTPException
 
 from src.schemas.bookings import BookingAdd, BookingRequest
@@ -26,8 +25,6 @@ async def create_booking(
         ) # type: ignore
     except ObjectNotFoundException:
         raise HTTPException(status_code=404, detail="Номер не найден")
-
-    room = cast(FullRoomData, room)
 
     _booking_data = BookingAdd(
         **booking_data.model_dump(), 

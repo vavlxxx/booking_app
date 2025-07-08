@@ -1,8 +1,9 @@
 from datetime import date
+
 from sqlalchemy import select, func
 
 from src.models.hotels import HotelsOrm
-
+from src.utils.exceptions import DatesMissMatchException
 from src.repos.base import BaseRepository
 from src.repos.utils import rooms_data_to_booking
 from src.repos.mappers.mappers import HotelsMapper
@@ -14,14 +15,18 @@ class HotelsRepository(BaseRepository):
     mapper = HotelsMapper
 
     async def get_all_filtered_by_time(
-            self, 
-            date_to: date, 
-            date_from: date,
-            limit: int, 
-            offset: int,
-            location: str | None = None,
-            title: str | None = None,
-    ):
+        self, 
+        date_to: date, 
+        date_from: date,
+        limit: int, 
+        offset: int,
+        location: str | None = None,
+        title: str | None = None,
+    ):  
+        
+        if date_from >= date_to:
+            raise DatesMissMatchException
+
         rooms_data_to_get = rooms_data_to_booking(date_from=date_from, date_to=date_to)
         hotels_ids_to_get = (
             select(rooms_data_to_get.selected_columns.hotel_id).distinct()

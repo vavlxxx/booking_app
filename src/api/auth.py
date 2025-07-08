@@ -4,6 +4,7 @@ from src.services.auth import AuthService
 
 from src.dependencies.db import DBDep
 from src.dependencies.auth import UserIdDep
+from src.utils.exceptions import ObjectNotFoundException
 
 from src.schemas.auth import (
      UserFullInfo,
@@ -28,7 +29,7 @@ async def register_user(
 )):
     user = await db.auth.get_one_or_none(email=user_data.email)
     if user is not None:
-        raise HTTPException(status_code=400, detail="Пользователь с таким email уже зарегистрирован")
+        raise HTTPException(status_code=409, detail="Пользователь с таким email уже зарегистрирован")
 
     hashed_password = AuthService().hash_password(user_data.password)
     data = user_data.model_dump(exclude={"password"})
@@ -49,7 +50,11 @@ async def login_user(
         openapi_examples=USER_LOGIN_EXAMPLES
     ),
 ):  
-    user: UserFullInfo = await db.auth.get_user_with_passwd(email=user_data.email)
+    try:
+        user: UserFullInfo = await db.auth.get_user_with_passwd(email=user_data.email)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
     password_is_valid =  AuthService().verify_password(user_data.password, user.hashed_password)
 
     if user is None or not password_is_valid:
@@ -64,12 +69,18 @@ async def login_user(
 async def only_auth(
         user_id: UserIdDep,
         db: DBDep
-):
-        user = await db.auth.get_one_or_none(id=user_id)
+):      
+        try:
+            user = await db.auth.get_one(id=user_id)
+        except ObjectNotFoundException:
+            raise HTTPException(status_code=404, detail="Пользователь не найден")
         return user
 
 
 @router.delete("/logout", summary="Выйти из аккаунта")
-async def logout_user(response: Response = Response(status_code=200)):
+async def logout_user(
+    user_id: UserIdDep,
+    response: Response = Response(status_code=200)
+):
     response.delete_cookie(key="access_token")
     return {"status": "OK"}

@@ -6,7 +6,7 @@ from src.repos.mappers.mappers import RoomsMapper, RoomsRelsMapper
 from src.schemas.rooms import RoomsWithRels
 from src.models.rooms import RoomsOrm
 from src.repos.utils import rooms_data_to_booking
-
+from src.utils.exceptions import DatesMissMatchException, ObjectNotFoundException
 
 class RoomsRepository(BaseRepository):
     model = RoomsOrm
@@ -14,6 +14,10 @@ class RoomsRepository(BaseRepository):
 
 
     async def get_all_filtered_by_time(self, hotel_id, date_from, date_to):
+
+        if date_from >= date_to:
+            raise DatesMissMatchException
+        
         empty_rooms_data_to_get = rooms_data_to_booking(date_from, date_to, hotel_id)
 
         query = (
@@ -43,4 +47,11 @@ class RoomsRepository(BaseRepository):
             return None
         
         return RoomsRelsMapper.map_to_domain_entity(obj) # type: ignore
+    
+    
+    async def get_one_with_rel(self, **filter_by) -> RoomsWithRels:
+        result = await self.get_one_or_none_with_rel(**filter_by)
+        if result is None:
+            raise ObjectNotFoundException
+        return result
     

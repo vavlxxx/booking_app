@@ -1,16 +1,20 @@
+from fastapi_cache.decorator import cache
 from fastapi import (
     APIRouter,
     Body,
+    HTTPException,
     Path,
 )
-from fastapi_cache.decorator import cache
 
 from src.schemas.hotels import HotelAdd, HotelNullable
 from src.helpers.hotels import HOTEL_EXAMPLES
-
 from src.dependencies.hotels import HoteParamsDep, PaginationDep
 from src.dependencies.db import DBDep
 from src.dependencies.rooms import DateDep
+from src.utils.exceptions import (
+    DatesMissMatchException,
+    ObjectNotFoundException
+)
 
 
 router = APIRouter(
@@ -26,15 +30,18 @@ async def get_hotels(
     hotel_filter_data: HoteParamsDep,
     dates: DateDep,
     db: DBDep
-):
-    hotels = await db.hotels.get_all_filtered_by_time(
-        location=hotel_filter_data.location,
-        title=hotel_filter_data.title,
-        limit=pagination.per_page,
-        offset=pagination.offset,
-        date_from=dates.date_from,
-        date_to=dates.date_to
-    )    
+):  
+    try:
+        hotels = await db.hotels.get_all_filtered_by_time(
+            location=hotel_filter_data.location,
+            title=hotel_filter_data.title,
+            limit=pagination.per_page,
+            offset=pagination.offset,
+            date_from=dates.date_from,
+            date_to=dates.date_to
+        )
+    except DatesMissMatchException as ex:
+        raise HTTPException(status_code=422, detail=ex.detail)
     return hotels
 
 
@@ -42,8 +49,11 @@ async def get_hotels(
 async def get_hotel(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля")
-):
-    hotel = await db.hotels.get_one_or_none(id=hotel_id)
+):  
+    try:
+        hotel = await db.hotels.get_one(id=hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
     return hotel
 
 
@@ -64,7 +74,16 @@ async def create_hotel(
 async def delete_hotel(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля")
-):
+):  
+    try:
+        await db.hotels.get_one(id=hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
+
+    rooms = await db.rooms.get_all_filtered(hotel_id=hotel_id)
+    if rooms is not None and len(rooms) > 0:
+        raise HTTPException(status_code=403, detail="Нельзя удалить отель, который содержит номера")
+
     await db.hotels.delete(id=hotel_id)
     await db.commit()
     return {"status": "OK"}
@@ -78,7 +97,12 @@ async def update_hotel_put(
         description="Данные об отеле", 
         openapi_examples=HOTEL_EXAMPLES
     )
-):
+):  
+    try:
+        await db.hotels.get_one(id=hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
+
     await db.hotels.edit(hotel_data, id=hotel_id)
     await db.commit()
     return {"status": "OK"}
@@ -93,6 +117,11 @@ async def update_hotel_patch(
         openapi_examples=HOTEL_EXAMPLES
     ),
 ):
+    try:
+        await db.hotels.get_one(id=hotel_id)
+    except ObjectNotFoundException:
+        raise HTTPException(status_code=404, detail="Отель не найден")
+
     await db.hotels.edit(hotel_data, id=hotel_id)
     await db.commit()
     return {"status": "OK"}
