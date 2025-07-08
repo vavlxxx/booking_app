@@ -48,9 +48,9 @@ async def test_create_booking(
 
 @pytest.fixture(scope="session")
 async def delete_all_bookings() -> None:
-    async for db in get_db_null_pool():
-        await db.bookings.delete()
-        await db.commit()
+    async for _db in get_db_null_pool():
+        await _db.bookings.delete()
+        await _db.commit()
     
 
 
