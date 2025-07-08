@@ -1,19 +1,24 @@
+from typing import Any, Sequence
+
 from sqlalchemy import delete, select, insert, update
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas.base import BasePydanticModel
 from src.repos.mappers.base import DataMapper
+from src.utils.exceptions import ObjectNotFoundException
+from src.db import Base
 
 class BaseRepository:
 
-    model = None
-    mapper: DataMapper = None
+    model: type[Base]
+    mapper: type[DataMapper]
+    session: AsyncSession
 
-
-    def __init__(self, session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-
-    async def get_all_filtered(self, *filter, **filter_by):
+    async def get_all_filtered(self, *filter, **filter_by) -> list[BasePydanticModel | Any]:
         query = (
             select(self.model)
             .filter(*filter)
@@ -27,7 +32,7 @@ class BaseRepository:
         return await self.get_all_filtered()
 
 
-    async def get_one_or_none(self, **filter_by) -> BasePydanticModel | None:
+    async def get_one_or_none(self, **filter_by) -> BasePydanticModel | None| Any:
         query = select(self.model).filter_by(**filter_by)
         result = await self.session.execute(query)
         obj = result.scalars().one_or_none()
@@ -36,7 +41,17 @@ class BaseRepository:
         return self.mapper.map_to_domain_entity(obj) 
 
 
-    async def add_bulk(self, data: list[BasePydanticModel]):
+    async def get_one(self, **filter_by) -> BasePydanticModel | Any:
+        query = select(self.model).filter_by(**filter_by)
+        result = await self.session.execute(query)
+        try:
+            obj = result.scalar_one()
+        except NoResultFound:
+            raise ObjectNotFoundException
+        return self.mapper.map_to_domain_entity(obj) 
+
+
+    async def add_bulk(self, data: Sequence[BasePydanticModel]):
         add_obj_stmt = insert(self.model).values([item.model_dump() for item in data])
         await self.session.execute(add_obj_stmt)
 

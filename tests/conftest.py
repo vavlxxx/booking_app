@@ -13,7 +13,12 @@ from src.db import Base, engine_null_pool, async_session_maker_null_pool
 from src.models import * # noqa: F403
 from src.config import get_settings
 from src.utils.db_manager import DBManager
-from src.utils.helpers import get_hotel_examples, get_room_examples
+from src.utils.helpers import (
+    get_hotel_examples, 
+    get_room_examples,
+    get_additionals_examples,
+    get_rooms_additionals_examples
+)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -35,6 +40,11 @@ async def db():
     async for db in get_db_null_pool():
         yield db
 
+@pytest.fixture(scope="module")
+async def db_module():
+    async for _db in get_db_null_pool():
+        yield _db
+
 
 # function (default), module, package, session
 @pytest.fixture(scope="session", autouse=True)
@@ -44,8 +54,21 @@ async def async_main(check_test_env) -> None:
         await conn.run_sync(Base.metadata.create_all)
 
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
-        await db.hotels.add_bulk(get_hotel_examples())
-        await db.rooms.add_bulk(get_room_examples())
+        
+        hotels = get_hotel_examples()
+        await db.hotels.add_bulk(hotels)
+
+        rooms = get_room_examples()
+        await db.rooms.add_bulk(rooms)
+
+        additionals = get_additionals_examples()
+        await db.additionals.add_bulk(additionals)
+
+        # заполняем комнаты случайными дополнительными удобствами
+        rooms_additionals = get_rooms_additionals_examples(rooms_quantity=len(rooms))
+        for room_id, additional_id in rooms_additionals:
+            await db.rooms_additionals.update_all(room_id, additional_id)
+
         await db.commit()
 
 

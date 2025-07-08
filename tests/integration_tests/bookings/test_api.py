@@ -4,8 +4,6 @@ import pytest
 
 from httpx import AsyncClient
 
-from tests.conftest import get_db_null_pool
-
 
 @pytest.mark.parametrize(
     "room_id, date_from, date_to, status_code", [
@@ -14,7 +12,7 @@ from tests.conftest import get_db_null_pool
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 400),
+    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 409),
 ])
 async def test_create_booking(
     room_id, 
@@ -46,11 +44,10 @@ async def test_create_booking(
     assert data["date_to"] == date_to
 
 
-@pytest.fixture(scope="session")
-async def delete_all_bookings() -> None:
-    async for _db in get_db_null_pool():
-        await _db.bookings.delete()
-        await _db.commit()
+@pytest.fixture(scope="module")
+async def delete_all_bookings(db_module) -> None:
+    await db_module.bookings.delete()
+    await db_module.commit()
     
 
 
@@ -61,7 +58,7 @@ async def delete_all_bookings() -> None:
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 3),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 4),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 5),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 400, 200, 5),
+    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 409, 200, 5),
 ])
 async def test_add_and_get_bookings(
     room_id, 

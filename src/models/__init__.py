@@ -5,9 +5,9 @@ from src.models.bookings import BookingsOrm
 from src.models.additionals import AdditionalsOrm
 
 __all__ = [
-    HotelsOrm,
-    RoomsOrm,
-    UsersOrm,
-    BookingsOrm,
-    AdditionalsOrm,
-]
+    "HotelsOrm",
+    "RoomsOrm",
+    "UsersOrm",
+    "BookingsOrm",
+    "AdditionalsOrm",
+] # type: ignore

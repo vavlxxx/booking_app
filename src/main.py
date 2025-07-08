@@ -29,7 +29,7 @@ from src.bootstrap import redis_manager
 async def lifespan(app: FastAPI):
     print("Application is starting...")
     await redis_manager.connect()
-    FastAPICache.init(RedisBackend(redis_manager.redis), prefix="fastapi-cache")
+    FastAPICache.init(RedisBackend(redis_manager._redis), prefix="fastapi-cache")
     yield 
     await redis_manager.close()
     print("Application is shutting down...")

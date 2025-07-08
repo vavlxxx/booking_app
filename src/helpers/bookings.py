@@ -1,4 +1,7 @@
-BOOKING_EXAMPLES = {
+from typing import Dict
+from fastapi.openapi.models import Example
+
+BOOKING_EXAMPLES: Dict[str, Example] = {
     "WEEKEND_BOOKING": {
         "summary": "Бронирование на выходные",
         "value": {

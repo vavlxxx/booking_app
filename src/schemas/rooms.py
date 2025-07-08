@@ -16,7 +16,7 @@ class RoomAdd(RoomDefault):
     hotel_id: int
 
 class RoomRequest(RoomDefault):
-    additionals_ids: Optional[list[int]] = Field(default_factory=list)
+    additionals_ids: list[int] = Field(default_factory=list)
 
 class FullRoomData(RoomAdd):
     id: int
@@ -33,5 +33,5 @@ class RoomOptional(BasePydanticModel):
     discount: Optional[int] = Field(default=0)
 
 class FullRoomOptional(RoomOptional):
-    additionals_ids: Optional[list[int]] = Field(default_factory=list)
+    additionals_ids: list[int] = Field(default_factory=list)
     

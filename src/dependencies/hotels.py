@@ -22,8 +22,8 @@ HoteParamsDep = Annotated[HotelParams, Depends(get_hotel_params)]
 
 class PaginationParams(BasePydanticModel):
 
-    page: Optional[int]
-    per_page: Optional[int]
+    page: Annotated[int, Query(1, ge=1)]
+    per_page: Annotated[int, Query(None, ge=1, le=15)]
     
     @property
     def offset(self) -> int:

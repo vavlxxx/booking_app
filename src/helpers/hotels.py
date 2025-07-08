@@ -1,4 +1,7 @@
-HOTEL_EXAMPLES = {
+from typing import Dict
+from fastapi.openapi.models import Example
+
+HOTEL_EXAMPLES: Dict[str, Example] = {
     "RITZ": {
         "summary": "PARIS RITZ", 
         "value": {

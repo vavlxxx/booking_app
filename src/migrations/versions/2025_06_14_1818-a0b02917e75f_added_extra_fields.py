@@ -54,7 +54,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_constraint(None, "users", type_="unique")
+    op.drop_constraint(None, "users", type_="unique") # type: ignore
     op.drop_constraint("check_gender_validity", "users", type_="check")
     op.drop_constraint("check_birthday_validity", "users", type_="check")
     op.drop_constraint("check_price_positive", "rooms", type_="check")

@@ -14,7 +14,7 @@ async def upload_image(file: UploadFile):
     with open(image_path, "wb+") as image:
         shutil.copyfileobj(file.file, image)
     
-    resize_image.delay(
+    resize_image.delay( # type: ignore
         image_path, 
         "src/media/images/", 
         (300, 700, 1000)

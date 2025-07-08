@@ -1,5 +1,7 @@
+from typing import Dict
+from fastapi.openapi.models import Example
 
-USER_REGISTER_EXAMPLES = {
+USER_REGISTER_EXAMPLES: Dict[str, Example] = {
     "ANNA_SMITH": {
         "summary": "Анна Смит - Менеджер",
         "value": {
@@ -59,7 +61,7 @@ USER_REGISTER_EXAMPLES = {
 
 
 
-USER_LOGIN_EXAMPLES = {
+USER_LOGIN_EXAMPLES: Dict[str, Example] = {
     "ANNA_SMITH": {
         "summary": "Анна Смит - Менеджер",
         "value": {

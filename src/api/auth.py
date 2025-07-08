@@ -6,6 +6,7 @@ from src.dependencies.db import DBDep
 from src.dependencies.auth import UserIdDep
 
 from src.schemas.auth import (
+     UserFullInfo,
      UserRegister, 
      UserRegisterRequest, 
      UserLoginRequest
@@ -48,7 +49,7 @@ async def login_user(
         openapi_examples=USER_LOGIN_EXAMPLES
     ),
 ):  
-    user = await db.auth.get_user_with_passwd(email=user_data.email)
+    user: UserFullInfo = await db.auth.get_user_with_passwd(email=user_data.email)
     password_is_valid =  AuthService().verify_password(user_data.password, user.hashed_password)
 
     if user is None or not password_is_valid:

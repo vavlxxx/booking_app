@@ -1,6 +1,5 @@
 from datetime import date
 
-from fastapi import HTTPException
 from sqlalchemy import select
 
 from src.repos.base import BaseRepository
@@ -8,6 +7,7 @@ from src.repos.mappers.mappers import BookingsMapper
 from src.repos.utils import rooms_data_to_booking
 from src.schemas.bookings import BookingAdd
 from src.models.bookings import BookingsOrm
+from src.utils.exceptions import AllRoomsAreBookedException
 
 class BookingsRepository(BaseRepository):
     model = BookingsOrm
@@ -17,7 +17,7 @@ class BookingsRepository(BaseRepository):
     async def get_today_checkin(self):
         query = (
             select(self.model)
-            .filter(self.model.date_from == date.today())
+            .filter(self.model.date_from == date.today()) # type: ignore
         )
         result = await self.session.execute(query)
         return [self.mapper.map_to_domain_entity(obj) for obj in result.scalars().all()]
@@ -36,6 +36,6 @@ class BookingsRepository(BaseRepository):
         result = await self.session.execute(rooms_data)
         results = result.scalars().all()
         if booking_data.room_id not in results:
-            raise HTTPException(status_code=400, detail="Комната полностью занята. Пожалуйста, выберите другую")
+            raise AllRoomsAreBookedException
         
         return await self.add(booking_data)

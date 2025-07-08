@@ -1,6 +1,12 @@
 from fastapi import APIRouter, Body, Path
 
-from src.schemas.rooms import RoomAdd, RoomRequest, FullRoomOptional
+from src.schemas.rooms import (
+    RoomAdd, 
+    RoomRequest, 
+    FullRoomOptional, 
+    FullRoomData,
+    RoomsWithRels
+)
 from src.schemas.additionals import RoomsAdditionalsRequest
 from src.helpers.rooms import ROOM_EXAMPLES
 
@@ -33,7 +39,7 @@ async def get_room_by_id(
     db: DBDep,
     ids: RoomWithIdsDep
 ):
-    room = await db.rooms.get_one_or_none_with_rel(
+    room: RoomsWithRels | None = await db.rooms.get_one_or_none_with_rel(
         hotel_id=ids.hotel_id, 
         id=ids.room_id
     )
@@ -49,13 +55,13 @@ async def create_room(
         openapi_examples=ROOM_EXAMPLES
 )): 
     _room_data = RoomAdd(**room_data.model_dump(exclude={"additionals_ids"}), hotel_id=hotel_id)
-    room = await db.rooms.add(_room_data)
+    room: FullRoomData = await db.rooms.add(_room_data) # type: ignore
 
     additionals = [
         RoomsAdditionalsRequest(
             additional_id=addit_id, 
             room_id=room.id
-        ) for addit_id in room_data.additionals_ids]
+        ) for addit_id in room_data.additionals_ids] # type: ignore
 
     if additionals:
         await db.rooms_additionals.add_bulk(additionals)

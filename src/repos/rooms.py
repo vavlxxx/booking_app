@@ -3,7 +3,7 @@ from sqlalchemy.orm import joinedload
 
 from src.repos.base import BaseRepository
 from src.repos.mappers.mappers import RoomsMapper, RoomsRelsMapper
-
+from src.schemas.rooms import RoomsWithRels
 from src.models.rooms import RoomsOrm
 from src.repos.utils import rooms_data_to_booking
 
@@ -19,10 +19,10 @@ class RoomsRepository(BaseRepository):
         query = (
             select(self.model)
             .select_from(self.model)
-            .options(joinedload(self.model.additionals))
-            .filter(self.model.id.in_(
+            .options(joinedload(self.model.additionals)) # type: ignore
+            .filter(self.model.id.in_( # type: ignore
                     select(empty_rooms_data_to_get.c.id)
-                    .select_from(empty_rooms_data_to_get)
+                    .select_from(empty_rooms_data_to_get) # type: ignore
                 )
             )
         )
@@ -30,11 +30,11 @@ class RoomsRepository(BaseRepository):
         return [RoomsRelsMapper.map_to_domain_entity(obj) for obj in result.unique().scalars().all()]
     
 
-    async def get_one_or_none_with_rel(self, **filter_by):
+    async def get_one_or_none_with_rel(self, **filter_by) -> RoomsWithRels | None:
         query = (
             select(self.model)
             .filter_by(**filter_by)
-            .options(joinedload(self.model.additionals))
+            .options(joinedload(self.model.additionals)) # type: ignore
         )
         
         result = await self.session.execute(query)
@@ -42,5 +42,5 @@ class RoomsRepository(BaseRepository):
         if obj is None:
             return None
         
-        return RoomsRelsMapper.map_to_domain_entity(obj)
+        return RoomsRelsMapper.map_to_domain_entity(obj) # type: ignore
     

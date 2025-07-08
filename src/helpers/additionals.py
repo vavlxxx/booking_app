@@ -1,4 +1,7 @@
-ADDITIONALS_EXAMPLES = {
+from typing import Dict
+from fastapi.openapi.models import Example
+
+ADDITIONALS_EXAMPLES: Dict[str, Example] = {
     "AIR_CONDITIONING": {
         "summary": "Кондиционер",
         "value": {

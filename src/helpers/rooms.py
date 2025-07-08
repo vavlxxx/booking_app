@@ -1,4 +1,7 @@
-ROOM_EXAMPLES = {
+from typing import Dict
+from fastapi.openapi.models import Example
+
+ROOM_EXAMPLES: Dict[str, Example] = {
     "STANDARD_ROOM": {
         "summary": "Стандартный номер",
         "value": {
