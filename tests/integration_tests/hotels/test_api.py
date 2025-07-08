@@ -5,7 +5,7 @@ from httpx import AsyncClient
 
 async def test_get_hotels(ac: AsyncClient):
     response = await ac.get(
-        url=f"/hotels/",
+        url="/hotels/",
         params={
             "date_from": (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), 
             "date_to": (date.today()+timedelta(days=10)).strftime("%Y-%m-%d")

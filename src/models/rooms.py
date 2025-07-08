@@ -1,9 +1,14 @@
 from typing import Optional
 
+import typing
+
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import CheckConstraint, Column, Computed, ForeignKey
+from sqlalchemy import CheckConstraint, Computed, ForeignKey
 
 from src.db import Base
+
+if typing.TYPE_CHECKING:
+    from src.models.additionals import AdditionalsOrm
 
 
 class RoomsOrm(Base):
@@ -19,7 +24,7 @@ class RoomsOrm(Base):
     discount: Mapped[Optional[int]] = mapped_column(default=0)
     discounted_price: Mapped[float] = mapped_column(Computed("price * (100 - discount) / 100"))
 
-    additionals: Mapped[list["AdditionalsOrm"]] = relationship( # type: ignore
+    additionals: Mapped[list["AdditionalsOrm"]] = relationship(
         secondary="room_additionals",
         back_populates="rooms",
     )

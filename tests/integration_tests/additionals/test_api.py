@@ -5,7 +5,7 @@ async def test_add_additionals(ac: AsyncClient):
     title = "Бесплатный Wi-Fi"
     descr = "Высокоскоростной беспроводный интернет во всех номерах"
     response = await ac.post(
-        url=f"/additionals/",
+        url="/additionals/",
         json={
             "name": title,
             "description": descr
@@ -21,7 +21,7 @@ async def test_add_additionals(ac: AsyncClient):
     
 
 async def test_get_additionals(ac: AsyncClient):
-    response = await ac.get(url=f"/additionals/")
+    response = await ac.get(url="/additionals/")
     data = response.json()
     assert response.status_code == 200
     assert data is not None
