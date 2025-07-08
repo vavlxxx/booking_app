@@ -4,7 +4,10 @@ from src.services.auth import AuthService
 
 from src.dependencies.db import DBDep
 from src.dependencies.auth import UserIdDep
-from src.utils.exceptions import ObjectNotFoundException
+from src.utils.exceptions import (
+    ObjectNotFoundException,
+    ObjectAlreadyExistsException
+)
 
 from src.schemas.auth import (
      UserFullInfo,
@@ -27,15 +30,14 @@ async def register_user(
         description="Данные о пользователе",
         openapi_examples=USER_REGISTER_EXAMPLES
 )):
-    user = await db.auth.get_one_or_none(email=user_data.email)
-    if user is not None:
-        raise HTTPException(status_code=409, detail="Пользователь с таким email уже зарегистрирован")
-
     hashed_password = AuthService().hash_password(user_data.password)
     data = user_data.model_dump(exclude={"password"})
     new_user_data = UserRegister(**data, hashed_password=hashed_password)
     
-    user = await db.auth.add(new_user_data)
+    try:
+        user = await db.auth.add(new_user_data)
+    except ObjectAlreadyExistsException:
+        raise HTTPException(status_code=404, detail="Пользователь с таким email уже существует")
     await db.commit()
 
     return {"status": "OK", "data": user}

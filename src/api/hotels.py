@@ -13,7 +13,10 @@ from src.dependencies.db import DBDep
 from src.dependencies.rooms import DateDep
 from src.utils.exceptions import (
     DatesMissMatchException,
-    ObjectNotFoundException
+    ObjectNotFoundException,
+    HotelNotFoundHTTPException,
+    InvalidDataHTTPException,
+    InvalidDataException
 )
 
 
@@ -42,6 +45,8 @@ async def get_hotels(
         )
     except DatesMissMatchException as ex:
         raise HTTPException(status_code=422, detail=ex.detail)
+    except InvalidDataException:
+        raise InvalidDataHTTPException
     return hotels
 
 
@@ -53,7 +58,9 @@ async def get_hotel(
     try:
         hotel = await db.hotels.get_one(id=hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
     return hotel
 
 
@@ -78,7 +85,9 @@ async def delete_hotel(
     try:
         await db.hotels.get_one(id=hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
 
     rooms = await db.rooms.get_all_filtered(hotel_id=hotel_id)
     if rooms is not None and len(rooms) > 0:
@@ -101,8 +110,10 @@ async def update_hotel_put(
     try:
         await db.hotels.get_one(id=hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
-
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
+    
     await db.hotels.edit(hotel_data, id=hotel_id)
     await db.commit()
     return {"status": "OK"}
@@ -120,8 +131,10 @@ async def update_hotel_patch(
     try:
         await db.hotels.get_one(id=hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
-
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
+    
     await db.hotels.edit(hotel_data, id=hotel_id)
     await db.commit()
     return {"status": "OK"}

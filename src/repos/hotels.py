@@ -1,12 +1,20 @@
+import logging
+
 from datetime import date
 
+from asyncpg import DataError
+
 from sqlalchemy import select, func
+from sqlalchemy.exc import DBAPIError
 
 from src.models.hotels import HotelsOrm
-from src.utils.exceptions import DatesMissMatchException
 from src.repos.base import BaseRepository
 from src.repos.utils import rooms_data_to_booking
 from src.repos.mappers.mappers import HotelsMapper
+from src.utils.exceptions import (
+    DatesMissMatchException,
+    InvalidDataException
+)
 
 
 class HotelsRepository(BaseRepository):
@@ -48,6 +56,15 @@ class HotelsRepository(BaseRepository):
             )
 
         hotels = hotels.limit(limit).offset(offset)
-        result = await self.session.execute(hotels)
+
+        try:
+            result = await self.session.execute(hotels)
+        except DBAPIError as exc:
+            logging.error(f"Cannot get data from DB, exc_type={exc.orig}")
+            if isinstance(exc.orig.__cause__, DataError): # type: ignore
+                raise InvalidDataException  from exc
+            logging.error(f"Unknown unhandled exception")
+            raise
+
         filtered_hotels_data = [self.mapper.map_to_domain_entity(hotel) for hotel in result.scalars().all()]
         return filtered_hotels_data

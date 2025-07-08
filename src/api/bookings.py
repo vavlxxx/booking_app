@@ -6,7 +6,13 @@ from src.helpers.bookings import BOOKING_EXAMPLES
 
 from src.dependencies.db import DBDep
 from src.dependencies.auth import UserIdDep
-from src.utils.exceptions import AllRoomsAreBookedException, ObjectNotFoundException
+from src.utils.exceptions import (
+    AllRoomsAreBookedException,
+    ObjectNotFoundException,
+    RoomNotFoundHTTPException,
+    InvalidDataHTTPException,
+    InvalidDataException
+)
 
 router = APIRouter(prefix="/bookings", tags=["Бронирование"])
 
@@ -24,7 +30,9 @@ async def create_booking(
             id=booking_data.room_id
         ) # type: ignore
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Номер не найден")
+        raise RoomNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
 
     _booking_data = BookingAdd(
         **booking_data.model_dump(), 

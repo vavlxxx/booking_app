@@ -12,7 +12,14 @@ from src.schemas.additionals import RoomsAdditionalsRequest
 from src.helpers.rooms import ROOM_EXAMPLES
 from src.dependencies.rooms import RoomWithIdsDep, DateDep
 from src.dependencies.db import DBDep
-from src.utils.exceptions import DatesMissMatchException, ObjectNotFoundException
+from src.utils.exceptions import (
+    DatesMissMatchException, 
+    ObjectNotFoundException,
+    RoomNotFoundHTTPException,
+    HotelNotFoundHTTPException,
+    InvalidDataHTTPException,
+    InvalidDataException
+)
 
 
 router = APIRouter(
@@ -30,7 +37,9 @@ async def get_rooms_by_hotel(
     try:
         await db.hotels.get_one(id=hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
 
     try:
         rooms = await db.rooms.get_all_filtered_by_time(
@@ -51,7 +60,9 @@ async def get_room_by_id(
     try:
         await db.hotels.get_one(id=ids.hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+            raise InvalidDataHTTPException
 
     try:
         room: RoomsWithRels | None = await db.rooms.get_one_with_rel(
@@ -59,7 +70,10 @@ async def get_room_by_id(
             id=ids.room_id
         )
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Номер в указанном отеле не найден")
+        raise RoomNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
+
     return room
 
 
@@ -74,7 +88,9 @@ async def create_room(
     try:
         await db.hotels.get_one(id=hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
 
     _room_data = RoomAdd(**room_data.model_dump(exclude={"additionals_ids"}), hotel_id=hotel_id)
     room: FullRoomData = await db.rooms.add(_room_data) # type: ignore
@@ -100,12 +116,17 @@ async def delete_room(
     try:
         await db.hotels.get_one(id=ids.hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Отель не найден")
-    
+        raise HotelNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
+
     try:
         await db.rooms.get_one(id=ids.room_id, hotel_id=ids.hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Номер в указанном отеле не найден")
+        raise RoomNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
+
 
     await db.rooms.delete(id=ids.room_id, hotel_id=ids.hotel_id)
     await db.commit()
@@ -124,7 +145,9 @@ async def update_room_put(
     try:
         await db.rooms.get_one(id=ids.room_id, hotel_id=ids.hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Номер не найден")
+        raise RoomNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
 
     await db.rooms.edit(
         room_data, 
@@ -152,7 +175,9 @@ async def update_room_patch(
     try:
         await db.rooms.get_one(id=ids.room_id, hotel_id=ids.hotel_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Номер не найден")
+        raise RoomNotFoundHTTPException
+    except InvalidDataException:
+        raise InvalidDataHTTPException
 
     await db.rooms.edit(
         room_data, 

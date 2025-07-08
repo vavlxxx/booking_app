@@ -1,13 +1,20 @@
+import logging
+
 from typing import Any, Sequence
 
+from asyncpg import UniqueViolationError, DataError
 from sqlalchemy import delete, select, insert, update
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, IntegrityError, DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.db import Base
 from src.schemas.base import BasePydanticModel
 from src.repos.mappers.base import DataMapper
-from src.utils.exceptions import ObjectNotFoundException
-from src.db import Base
+from src.utils.exceptions import (
+    ObjectNotFoundException,
+    ObjectAlreadyExistsException,
+    InvalidDataException
+)
 
 class BaseRepository:
 
@@ -43,11 +50,18 @@ class BaseRepository:
 
     async def get_one(self, **filter_by) -> BasePydanticModel | Any:
         query = select(self.model).filter_by(**filter_by)
-        result = await self.session.execute(query)
         try:
+            result = await self.session.execute(query)
             obj = result.scalar_one()
         except NoResultFound:
             raise ObjectNotFoundException
+        except DBAPIError as exc:
+            logging.error(f"Cannot get data from DB, {filter_by=}, exc_type={exc.orig}")
+            if isinstance(exc.orig.__cause__, DataError): # type: ignore
+                raise InvalidDataException from exc
+            logging.error(f"Unknown unhandled exception")
+            raise exc
+
         return self.mapper.map_to_domain_entity(obj) 
 
 
@@ -58,7 +72,15 @@ class BaseRepository:
 
     async def add(self, data: BasePydanticModel, **params):
         add_obj_stmt = insert(self.model).values(**data.model_dump(), **params).returning(self.model)
-        result = await self.session.execute(add_obj_stmt)
+        try:
+            result = await self.session.execute(add_obj_stmt)
+        except IntegrityError as exc:
+            logging.error(f"Cannot insert data into DB, {data=}, exc_type={exc.orig}")
+            if isinstance(exc.orig.__cause__, UniqueViolationError): # type: ignore
+                raise ObjectAlreadyExistsException from exc
+            logging.error(f"Unknown unhandled exception")
+            raise exc
+
         obj = result.scalars().one()
         return self.mapper.map_to_domain_entity(obj)
 

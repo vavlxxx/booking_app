@@ -1,12 +1,21 @@
+import logging
+
+from asyncpg import DataError
+
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
+from sqlalchemy.exc import DBAPIError
 
 from src.repos.base import BaseRepository
 from src.repos.mappers.mappers import RoomsMapper, RoomsRelsMapper
 from src.schemas.rooms import RoomsWithRels
 from src.models.rooms import RoomsOrm
 from src.repos.utils import rooms_data_to_booking
-from src.utils.exceptions import DatesMissMatchException, ObjectNotFoundException
+from src.utils.exceptions import (
+    DatesMissMatchException, 
+    ObjectNotFoundException,
+    InvalidDataException
+)
 
 class RoomsRepository(BaseRepository):
     model = RoomsOrm
@@ -41,7 +50,14 @@ class RoomsRepository(BaseRepository):
             .options(joinedload(self.model.additionals)) # type: ignore
         )
         
-        result = await self.session.execute(query)
+        try:
+            result = await self.session.execute(query)
+        except DBAPIError as exc:
+            logging.error(f"Cannot get data from DB, {filter_by=}, exc_type={exc.orig}")
+            if isinstance(exc.orig.__cause__, DataError): # type: ignore
+                raise InvalidDataException from exc 
+            logging.error(f"Unknown unhandled exception")
+            raise exc
         obj = result.scalars().unique().one_or_none()
         if obj is None:
             return None
