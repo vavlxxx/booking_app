@@ -11,12 +11,18 @@ from src.helpers.hotels import HOTEL_EXAMPLES
 from src.dependencies.hotels import HoteParamsDep, PaginationDep
 from src.dependencies.db import DBDep
 from src.dependencies.rooms import DateDep
+from src.services.hotels import HotelsService
+
 from src.utils.exceptions import (
     DatesMissMatchException,
+    DatesMissMatchHTTPException,
     ObjectNotFoundException,
+    HotelNotFoundException,
     HotelNotFoundHTTPException,
     InvalidDataHTTPException,
-    InvalidDataException
+    InvalidDataException,
+    NotEmptyHotelException,
+    NotEmptyHotelHTTPException
 )
 
 
@@ -35,19 +41,18 @@ async def get_hotels(
     db: DBDep
 ):  
     try:
-        hotels = await db.hotels.get_all_filtered_by_time(
-            location=hotel_filter_data.location,
-            title=hotel_filter_data.title,
-            limit=pagination.per_page,
-            offset=pagination.offset,
-            date_from=dates.date_from,
-            date_to=dates.date_to
-        )
-    except DatesMissMatchException as ex:
-        raise HTTPException(status_code=422, detail=ex.detail)
+        hotels = await HotelsService(db).get_hotels(pagination, hotel_filter_data, dates)
+    except DatesMissMatchException:
+        raise DatesMissMatchHTTPException
     except InvalidDataException:
         raise InvalidDataHTTPException
-    return hotels
+    return {
+        "status": "OK",
+        "page": pagination.page,
+        "offset": pagination.offset,
+        "detail": "Отели были успешно получены", 
+        "data": hotels
+    }
 
 
 @router.get("/{hotel_id}", summary="Получить отель")
@@ -56,12 +61,14 @@ async def get_hotel(
     hotel_id: int = Path(description="ID отеля")
 ):  
     try:
-        hotel = await db.hotels.get_one(id=hotel_id)
-    except ObjectNotFoundException:
+        hotel = await HotelsService(db).get_hotel(hotel_id=hotel_id)
+    except HotelNotFoundException:
         raise HotelNotFoundHTTPException
+    except NotEmptyHotelException:
+        raise NotEmptyHotelHTTPException
     except InvalidDataException:
         raise InvalidDataHTTPException
-    return hotel
+    return {"status": "OK", "detail": "Отель был успешно получен", "data": hotel}
 
 
 @router.post("/", summary="Добавить отель")
@@ -72,9 +79,8 @@ async def create_hotel(
         openapi_examples=HOTEL_EXAMPLES
     )
 ):
-    hotel = await db.hotels.add(hotel_data)
-    await db.commit()
-    return {"status": "OK", "data": hotel}
+    hotel = await HotelsService(db).add_hotel(hotel_data) # type: ignore
+    return {"status": "OK", "detail": "Отель был успешно добавлен", "data": hotel}
 
 
 @router.delete("/{hotel_id}", summary="Удалить отель")
@@ -83,19 +89,15 @@ async def delete_hotel(
     hotel_id: int = Path(description="ID отеля")
 ):  
     try:
-        await db.hotels.get_one(id=hotel_id)
+        await HotelsService(db).delete_hotel(hotel_id=hotel_id)
     except ObjectNotFoundException:
         raise HotelNotFoundHTTPException
     except InvalidDataException:
         raise InvalidDataHTTPException
-
-    rooms = await db.rooms.get_all_filtered(hotel_id=hotel_id)
-    if rooms is not None and len(rooms) > 0:
-        raise HTTPException(status_code=403, detail="Нельзя удалить отель, который содержит номера")
-
-    await db.hotels.delete(id=hotel_id)
-    await db.commit()
-    return {"status": "OK"}
+    except NotEmptyHotelException:
+        raise HTTPException(status_code=422, detail="Нельзя удалить отель с номерами")
+    
+    return {"status": "OK", "detail": "Отель был успешно удалён"}
 
 
 @router.put("/{hotel_id}", summary="Полностью обновить данные отеля")
@@ -108,15 +110,12 @@ async def update_hotel_put(
     )
 ):  
     try:
-        await db.hotels.get_one(id=hotel_id)
+        await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
     except ObjectNotFoundException:
         raise HotelNotFoundHTTPException
     except InvalidDataException:
         raise InvalidDataHTTPException
-    
-    await db.hotels.edit(hotel_data, id=hotel_id)
-    await db.commit()
-    return {"status": "OK"}
+    return {"status": "OK", "detail": "Отель был успешно полностью обновлен"}
 
 
 @router.patch("/{hotel_id}", summary="Частично обновить данные отеля")
@@ -129,12 +128,9 @@ async def update_hotel_patch(
     ),
 ):
     try:
-        await db.hotels.get_one(id=hotel_id)
+        await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
     except ObjectNotFoundException:
         raise HotelNotFoundHTTPException
     except InvalidDataException:
         raise InvalidDataHTTPException
-    
-    await db.hotels.edit(hotel_data, id=hotel_id)
-    await db.commit()
-    return {"status": "OK"}
+    return {"status": "OK", "detail": "Отель был успешно частично обновлен"}

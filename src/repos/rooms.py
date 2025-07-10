@@ -2,7 +2,7 @@ import logging
 
 from asyncpg import DataError
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import DBAPIError
 
@@ -10,6 +10,7 @@ from src.repos.base import BaseRepository
 from src.repos.mappers.mappers import RoomsMapper, RoomsRelsMapper
 from src.schemas.rooms import RoomsWithRels
 from src.models.rooms import RoomsOrm
+from src.models.additionals import RoomsAdditionalsOrm
 from src.repos.utils import rooms_data_to_booking
 from src.utils.exceptions import (
     DatesMissMatchException, 
@@ -70,4 +71,3 @@ class RoomsRepository(BaseRepository):
         if result is None:
             raise ObjectNotFoundException
         return result
-    

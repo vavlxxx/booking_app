@@ -1,8 +1,9 @@
 
 import sys
-import logging
-
 from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -25,7 +26,7 @@ from src.bootstrap import redis_manager
 
 
 logging.basicConfig(level=logging.INFO)
-sys.path.append(str(Path(__file__).parent.parent))
+
 
 
 @asynccontextmanager
@@ -47,6 +48,27 @@ app = FastAPI(
     redoc_url=None,
     lifespan=lifespan
 )
+
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import HTTPException
+
+
+@app.exception_handler(HTTPException)
+async def custom_http_exception_handler(request: Request, exc: HTTPException):
+    status = getattr(exc, 'status', 'ERROR')
+    
+    response_content = {
+        "detail": exc.detail,
+        "status": status
+    }
+    
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=response_content,
+        headers=exc.headers
+    )
+
 
 app.include_router(router_docs)
 app.include_router(router_auth)

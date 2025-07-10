@@ -13,7 +13,8 @@ from src.repos.utils import rooms_data_to_booking
 from src.repos.mappers.mappers import HotelsMapper
 from src.utils.exceptions import (
     DatesMissMatchException,
-    InvalidDataException
+    InvalidDataException,
+    CurrentDateException
 )
 
 
@@ -31,8 +32,9 @@ class HotelsRepository(BaseRepository):
         location: str | None = None,
         title: str | None = None,
     ):  
-        
-        if date_from >= date_to:
+        if date_from == date_to:
+            raise CurrentDateException
+        if date_from > date_to:
             raise DatesMissMatchException
 
         rooms_data_to_get = rooms_data_to_booking(date_from=date_from, date_to=date_to)
