@@ -1,6 +1,6 @@
 ```bash
 # создание docker-образа приложения
-docker build -t booking_image .
+docker build -t booking_app_image .
 
 # создание единой docker-сети
 docker network create booknet

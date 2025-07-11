@@ -29,6 +29,8 @@ def resize_image(image_path: str, output_folder: str, width_sizes: list[int]):
         output_path = os.path.join(output_folder, new_file_name)
         resized_img.save(output_path)
     
+    img.close()
+    os.remove(image_path)
     logging.info(f"Image was resized to the following sizes: {width_sizes} and saved to {output_folder}")
 
 
