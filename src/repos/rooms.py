@@ -12,7 +12,6 @@ from src.schemas.rooms import RoomsWithRels
 from src.models.rooms import RoomsOrm
 from src.repos.utils import rooms_data_to_booking
 from src.utils.exceptions import (
-    DatesMissMatchException, 
     ObjectNotFoundException,
     InvalidDataException
 )

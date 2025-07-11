@@ -8,8 +8,6 @@ from src.dependencies.auth import UserIdDep
 from src.utils.exceptions import (
     AllRoomsAreBookedException,
     AllRoomsAreBookedHTTPException,
-    CurrentDateException,
-    CurrentDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
     RoomNotFoundException,
@@ -33,8 +31,6 @@ async def create_booking(
         booking = await BookingsService(db).add_booking(booking_data, user_id)
     except DatesMissMatchException as exc:
         raise DatesMissMatchHTTPException from exc
-    except CurrentDateException as exc:
-        raise CurrentDateHTTPException from exc
     except RoomNotFoundException as exc:
         raise RoomNotFoundHTTPException from exc
     except AllRoomsAreBookedException as exc:

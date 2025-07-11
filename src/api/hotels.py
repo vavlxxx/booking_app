@@ -1,10 +1,5 @@
 from fastapi_cache.decorator import cache
-from fastapi import (
-    APIRouter,
-    Body,
-    HTTPException,
-    Path,
-)
+from fastapi import APIRouter, Body, Path
 
 from src.schemas.hotels import HotelAdd, HotelNullable
 from src.helpers.hotels import HOTEL_EXAMPLES
@@ -95,7 +90,7 @@ async def delete_hotel(
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
     except NotEmptyHotelException as exc:
-        raise HTTPException(status_code=422, detail="Нельзя удалить отель с номерами")
+        raise NotEmptyHotelHTTPException from exc
     
     return {"status": "OK", "detail": "Отель был успешно удалён"}
 

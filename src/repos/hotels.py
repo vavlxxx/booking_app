@@ -11,11 +11,7 @@ from src.models.hotels import HotelsOrm
 from src.repos.base import BaseRepository
 from src.repos.utils import rooms_data_to_booking
 from src.repos.mappers.mappers import HotelsMapper
-from src.utils.exceptions import (
-    DatesMissMatchException,
-    InvalidDataException,
-    CurrentDateException
-)
+from src.utils.exceptions import InvalidDataException
 
 
 class HotelsRepository(BaseRepository):

@@ -35,7 +35,7 @@ class AuthService(BaseService):
         try:
             user = await self.db.auth.add(new_user_data)
         except ObjectAlreadyExistsException as exc:
-            raise UserAlreadyExistsException
+            raise UserAlreadyExistsException from exc
         
         await self.db.commit()
         return user
@@ -45,7 +45,7 @@ class AuthService(BaseService):
         try:
             user: UserFullInfo = await self.db.auth.get_user_with_passwd(email=user_data.email)
         except ObjectNotFoundException as exc:
-            raise IncorrentLoginDataException
+            raise IncorrentLoginDataException from exc
         
         if not self._verify_password(user_data.password, user.hashed_password):
             raise IncorrentLoginDataException
@@ -59,7 +59,7 @@ class AuthService(BaseService):
         try:
             user = await self.db.auth.get_one(id=user_id)
         except ObjectNotFoundException as exc:
-            raise UserNotFoundException
+            raise UserNotFoundException from exc
         return user
 
 

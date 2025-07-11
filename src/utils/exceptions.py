@@ -30,10 +30,7 @@ class NotAuthenticatedException(ApplicationBaseException):
     detail = "Пользователь не аутентифицирован"
 
 class DatesMissMatchException(ApplicationBaseException):
-    detail = "Дата заезда не может быть равна или быть позже даты выезда"
-
-class CurrentDateException(ApplicationBaseException):
-    detail = "Нельзя начать бронь в день въезда"
+    detail = "Некорректные даты"
 
 class NotEmptyHotelException(ApplicationBaseException):
     detail = "Невозможно удалить отель, у которого есть номера"
@@ -61,7 +58,6 @@ class ObjectNotFoundHTTPException(ApplicationBaseHTTPException):
     detail = "Объект не найден"
     status_code = 404
 
-
 class HotelNotFoundHTTPException(ObjectNotFoundHTTPException):
     detail = "Отель не найден"
     status_code = 404
@@ -87,11 +83,7 @@ class NotEmptyHotelHTTPException(ApplicationBaseHTTPException):
     status_code = 422
 
 class DatesMissMatchHTTPException(ApplicationBaseHTTPException):
-    detail = "Дата заезда не может быть равна или быть позже даты выезда"
-    status_code = 422
-
-class CurrentDateHTTPException(ApplicationBaseHTTPException):
-    detail = "Нельзя начать бронь в день въезда"
+    detail = "Некорректные даты"
     status_code = 422
 
 class UserAlreadyExistsHTTPException(ApplicationBaseHTTPException):
@@ -104,4 +96,4 @@ class NotAuthenticatedHTTPException(ApplicationBaseHTTPException):
 
 class AllRoomsAreBookedHTTPException(ApplicationBaseHTTPException):
     detail = "Не осталось свободных номеров"
-    status_code = 409
+    status_code = 404

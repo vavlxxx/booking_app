@@ -10,8 +10,6 @@ from src.dependencies.rooms import RoomWithIdsDep, DateDep
 from src.dependencies.db import DBDep
 
 from src.utils.exceptions import (
-    CurrentDateException,
-    CurrentDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
     HotelNotFoundException,
@@ -41,8 +39,6 @@ async def get_rooms_by_hotel(
         raise HotelNotFoundHTTPException from exc
     except DatesMissMatchException as exc:
         raise DatesMissMatchHTTPException from exc
-    except CurrentDateException as exc:
-        raise CurrentDateHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
     

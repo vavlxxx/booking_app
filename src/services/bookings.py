@@ -1,14 +1,17 @@
 from schemas.bookings import BookingAdd
 from schemas.rooms import FullRoomData
 from src.services.base import BaseService, ExceptionsHandler
-from utils.exceptions import ObjectNotFoundException, RoomNotFoundException
+from src.utils.exceptions import ObjectNotFoundException, RoomNotFoundException
 
 
 class BookingsService(BaseService, ExceptionsHandler):
     
     async def add_booking(self, booking_data, user_id):
-        await self.check_dates_validity(date_from=booking_data.date_from, date_to=booking_data.date_to)
-        
+        await self.check_dates_validity(
+            date_from=booking_data.date_from, 
+            date_to=booking_data.date_to
+        )
+
         try:
             room: FullRoomData = await self.get_room_and_check_existence(
                 db=self.db,

@@ -12,7 +12,7 @@ from httpx import AsyncClient
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 409),
+    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 404),
 ])
 async def test_create_booking(
     room_id, 
@@ -55,10 +55,11 @@ async def delete_all_bookings(db_module) -> None:
     "room_id, date_from, date_to, status_code_for_post, status_code_for_get, count", [
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 1),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 2),
+    (1, (date.today()-timedelta(days=20)).strftime("%Y-%m-%d"), (date.today()-timedelta(days=10)).strftime("%Y-%m-%d"), 422, 200, 2),
+    (1, date.today().strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 422, 200, 2),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 3),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 4),
     (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 5),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 409, 200, 5),
 ])
 async def test_add_and_get_bookings(
     room_id, 
