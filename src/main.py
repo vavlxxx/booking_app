@@ -9,9 +9,13 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from fastapi import FastAPI
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import HTTPException
 from fastapi_cache import FastAPICache
 # from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
+
 
 from src.api.hotels import router as router_hotels
 from src.api.auth import router as router_auth
@@ -48,11 +52,6 @@ app = FastAPI(
     redoc_url=None,
     lifespan=lifespan
 )
-
-from fastapi import Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import HTTPException
-
 
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):

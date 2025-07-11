@@ -1,14 +1,18 @@
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body
 
-from src.schemas.bookings import BookingAdd, BookingRequest
-from src.schemas.rooms import FullRoomData
+from src.schemas.bookings import BookingRequest
 from src.helpers.bookings import BOOKING_EXAMPLES
-
+from src.services.bookings import BookingsService
 from src.dependencies.db import DBDep
 from src.dependencies.auth import UserIdDep
 from src.utils.exceptions import (
     AllRoomsAreBookedException,
-    ObjectNotFoundException,
+    AllRoomsAreBookedHTTPException,
+    CurrentDateException,
+    CurrentDateHTTPException,
+    DatesMissMatchException,
+    DatesMissMatchHTTPException,
+    RoomNotFoundException,
     RoomNotFoundHTTPException,
     InvalidDataHTTPException,
     InvalidDataException
@@ -26,30 +30,23 @@ async def create_booking(
         openapi_examples=BOOKING_EXAMPLES
 )): 
     try:
-        room: FullRoomData = await db.rooms.get_one(
-            id=booking_data.room_id
-        ) # type: ignore
-    except ObjectNotFoundException:
-        raise RoomNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
-
-    _booking_data = BookingAdd(
-        **booking_data.model_dump(), 
-        user_id=user_id,
-        price=room.discounted_price
-    )
-
-    try:
-        booking = await db.bookings.add_booking(
-            booking_data=_booking_data,
-            hotel_id=room.hotel_id
-        )
-    except AllRoomsAreBookedException as ex:
-        raise HTTPException(status_code=409, detail=ex.detail)
+        booking = await BookingsService(db).add_booking(booking_data, user_id)
+    except DatesMissMatchException as exc:
+        raise DatesMissMatchHTTPException from exc
+    except CurrentDateException as exc:
+        raise CurrentDateHTTPException from exc
+    except RoomNotFoundException as exc:
+        raise RoomNotFoundHTTPException from exc
+    except AllRoomsAreBookedException as exc:
+        raise AllRoomsAreBookedHTTPException from exc 
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     
-    await db.commit()
-    return booking
+    return {
+        "status": "OK",
+        "detail": "Бронирование было успешно добавлено",
+        "data": booking
+    }
 
 
 @router.get("/me", summary="Получить все бронирования аутентифицированного пользователя")
@@ -57,15 +54,21 @@ async def get_user_bookings(
     db: DBDep,
     user_id: UserIdDep
 ):
-    bookings = await db.bookings.get_all_filtered(
-        user_id=user_id
-    )
-    return bookings
+    bookings = await BookingsService(db).get_user_bookings(user_id=user_id)
+    return {
+        "status": "OK",
+        "detail": "Бронирования пользователя были успешно получены",
+        "data": bookings
+    }
 
 
 @router.get("/", summary="Получить список бронирований")
 async def get_all_bookings(
     db: DBDep
-):
-    bookings = await db.bookings.get_all()
-    return bookings
+):  
+    bookings = await BookingsService(db).get_all_bookings()
+    return {
+        "status": "OK",
+        "detail": "Бронирования были успешно получены",
+        "data": bookings
+    }

@@ -42,10 +42,10 @@ async def get_hotels(
 ):  
     try:
         hotels = await HotelsService(db).get_hotels(pagination, hotel_filter_data, dates)
-    except DatesMissMatchException:
-        raise DatesMissMatchHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except DatesMissMatchException as exc:
+        raise DatesMissMatchHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     return {
         "status": "OK",
         "page": pagination.page,
@@ -62,12 +62,12 @@ async def get_hotel(
 ):  
     try:
         hotel = await HotelsService(db).get_hotel(hotel_id=hotel_id)
-    except HotelNotFoundException:
-        raise HotelNotFoundHTTPException
-    except NotEmptyHotelException:
-        raise NotEmptyHotelHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except HotelNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except NotEmptyHotelException as exc:
+        raise NotEmptyHotelHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     return {"status": "OK", "detail": "Отель был успешно получен", "data": hotel}
 
 
@@ -90,11 +90,11 @@ async def delete_hotel(
 ):  
     try:
         await HotelsService(db).delete_hotel(hotel_id=hotel_id)
-    except ObjectNotFoundException:
-        raise HotelNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
-    except NotEmptyHotelException:
+    except ObjectNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
+    except NotEmptyHotelException as exc:
         raise HTTPException(status_code=422, detail="Нельзя удалить отель с номерами")
     
     return {"status": "OK", "detail": "Отель был успешно удалён"}
@@ -111,10 +111,10 @@ async def update_hotel_put(
 ):  
     try:
         await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
-    except ObjectNotFoundException:
-        raise HotelNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except ObjectNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     return {"status": "OK", "detail": "Отель был успешно полностью обновлен"}
 
 
@@ -129,8 +129,8 @@ async def update_hotel_patch(
 ):
     try:
         await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
-    except ObjectNotFoundException:
-        raise HotelNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except ObjectNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     return {"status": "OK", "detail": "Отель был успешно частично обновлен"}

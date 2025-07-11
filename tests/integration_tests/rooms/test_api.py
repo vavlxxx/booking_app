@@ -14,7 +14,7 @@ async def test_change_additionals_in_room(
     )
     assert response.status_code == 200
     
-    data = response.json()
+    data = response.json()["data"]
     assert data is not None
     assert isinstance(data, dict)
     assert "additionals" in data
@@ -34,10 +34,10 @@ async def test_change_additionals_in_room(
     )
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["data"]
     assert data is not None
     assert isinstance(data, dict)
-    assert "additionals" in data["data"]
+    assert "additionals" in data
 
     additionals_ids_after_change = []
     for additional in data["additionals"]:

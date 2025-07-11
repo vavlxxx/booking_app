@@ -4,17 +4,64 @@ from fastapi import HTTPException
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 
+from src.services.base import BaseService
+from src.schemas.auth import UserFullInfo, UserLoginRequest, UserRegister, UserRegisterRequest
 from src.config import get_settings
+from src.utils.exceptions import (
+    IncorrentLoginDataException, 
+    ObjectAlreadyExistsException, 
+    ObjectNotFoundException, 
+    UserAlreadyExistsException, 
+    UserNotFoundException
+)
 
 
-class AuthService:
+class AuthService(BaseService):
+
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    def hash_password(self, password) -> str:
+    def _hash_password(self, password) -> str:
         return self.pwd_context.hash(password)
 
-    def verify_password(self, plain_password, hashed_password):
+    def _verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
+
+
+    async def add_user(self, user_data: UserRegisterRequest):
+        hashed_password = self._hash_password(user_data.password)
+        data = user_data.model_dump(exclude={"password"})
+        new_user_data = UserRegister(**data, hashed_password=hashed_password)
+        
+        try:
+            user = await self.db.auth.add(new_user_data)
+        except ObjectAlreadyExistsException as exc:
+            raise UserAlreadyExistsException
+        
+        await self.db.commit()
+        return user
+
+
+    async def login_user(self, user_data: UserLoginRequest, response):
+        try:
+            user: UserFullInfo = await self.db.auth.get_user_with_passwd(email=user_data.email)
+        except ObjectNotFoundException as exc:
+            raise IncorrentLoginDataException
+        
+        if not self._verify_password(user_data.password, user.hashed_password):
+            raise IncorrentLoginDataException
+            
+        access_token = self.create_access_token({"user_id": user.id})
+        response.set_cookie(key="access_token", value=access_token)
+        return access_token
+
+
+    async def get_user(self, user_id: int):
+        try:
+            user = await self.db.auth.get_one(id=user_id)
+        except ObjectNotFoundException as exc:
+            raise UserNotFoundException
+        return user
+
 
     @staticmethod
     def create_access_token(data: dict):

@@ -14,8 +14,7 @@ from src.utils.exceptions import (
     CurrentDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
-    HotelNotFoundException, 
-    ObjectNotFoundException,
+    HotelNotFoundException,
     RoomNotFoundException,
     RoomNotFoundHTTPException,
     HotelNotFoundHTTPException,
@@ -38,14 +37,14 @@ async def get_rooms_by_hotel(
 ):  
     try:
         rooms = await RoomsService(db).get_rooms(hotel_id=hotel_id, dates=dates)
-    except HotelNotFoundException:
-        raise HotelNotFoundHTTPException
-    except DatesMissMatchException:
-        raise DatesMissMatchHTTPException
-    except CurrentDateException:
-        raise CurrentDateHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except HotelNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except DatesMissMatchException as exc:
+        raise DatesMissMatchHTTPException from exc
+    except CurrentDateException as exc:
+        raise CurrentDateHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     
     return {
         "status": "OK", 
@@ -62,12 +61,12 @@ async def get_room_by_id(
     try:
         room = await RoomsService(db).get_room(ids.room_id, ids.hotel_id) 
         await db.hotels.get_one(id=ids.hotel_id)
-    except HotelNotFoundException:
-        raise HotelNotFoundHTTPException
-    except RoomNotFoundException:
-        raise RoomNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except HotelNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except RoomNotFoundException as exc:
+        raise RoomNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     
     return {
         "status": "OK", 
@@ -86,12 +85,12 @@ async def create_room(
 )): 
     try:
         room = await RoomsService(db).add_room(room_data, hotel_id)
-    except HotelNotFoundException:
-        raise HotelNotFoundHTTPException
-    except RoomNotFoundException:
-        raise RoomNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except HotelNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except RoomNotFoundException as exc:
+        raise RoomNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
     
     return {
         "status": "OK",
@@ -107,12 +106,12 @@ async def delete_room(
 ):
     try:
         await RoomsService(db).delete_room(ids.room_id, ids.hotel_id)
-    except HotelNotFoundException:
-        raise HotelNotFoundHTTPException
-    except RoomNotFoundException:
-        raise RoomNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except HotelNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except RoomNotFoundException as exc:
+        raise RoomNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
 
     return {
         "status": "OK",
@@ -131,12 +130,12 @@ async def update_room_put(
 ):  
     try:
         room = await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
-    except HotelNotFoundException:
-        raise HotelNotFoundHTTPException
-    except RoomNotFoundException:
-        raise RoomNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except HotelNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except RoomNotFoundException as exc:
+        raise RoomNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
 
     return {
         "status": "OK",
@@ -156,12 +155,12 @@ async def update_room_patch(
 ):  
     try:
         room = await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
-    except HotelNotFoundException:
-        raise HotelNotFoundHTTPException
-    except RoomNotFoundException:
-        raise RoomNotFoundHTTPException
-    except InvalidDataException:
-        raise InvalidDataHTTPException
+    except HotelNotFoundException as exc:
+        raise HotelNotFoundHTTPException from exc
+    except RoomNotFoundException as exc:
+        raise RoomNotFoundHTTPException from exc
+    except InvalidDataException as exc:
+        raise InvalidDataHTTPException from exc
 
     return {
         "status": "OK",

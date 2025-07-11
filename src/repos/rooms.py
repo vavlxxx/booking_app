@@ -2,7 +2,7 @@ import logging
 
 from asyncpg import DataError
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import DBAPIError
 
@@ -10,7 +10,6 @@ from src.repos.base import BaseRepository
 from src.repos.mappers.mappers import RoomsMapper, RoomsRelsMapper
 from src.schemas.rooms import RoomsWithRels
 from src.models.rooms import RoomsOrm
-from src.models.additionals import RoomsAdditionalsOrm
 from src.repos.utils import rooms_data_to_booking
 from src.utils.exceptions import (
     DatesMissMatchException, 
@@ -24,12 +23,7 @@ class RoomsRepository(BaseRepository):
 
 
     async def get_all_filtered_by_time(self, hotel_id, date_from, date_to):
-
-        if date_from >= date_to:
-            raise DatesMissMatchException
-        
         empty_rooms_data_to_get = rooms_data_to_booking(date_from, date_to, hotel_id)
-
         query = (
             select(self.model)
             .select_from(self.model)
@@ -57,7 +51,7 @@ class RoomsRepository(BaseRepository):
             logging.error(f"Cannot get data from DB, {filter_by=}, exc_type={exc.orig}")
             if isinstance(exc.orig.__cause__, DataError): # type: ignore
                 raise InvalidDataException from exc 
-            logging.error(f"Unknown unhandled exception")
+            logging.error("Unknown unhandled exception")
             raise exc
         obj = result.scalars().unique().one_or_none()
         if obj is None:

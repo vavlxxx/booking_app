@@ -33,14 +33,14 @@ async def test_auth_flow(email, password, first_name, last_name, birthday, gende
     assert response.status_code == 200
     
     data = response.json()
-    response_token = data.get("access_token")
+    response_token = data.get("data").get("access_token")
     cookies_token = ac.cookies.get("access_token")
     assert response_token and cookies_token
     assert response_token == cookies_token
 
     response = await ac.get("/auth/profile")
     assert response.status_code == 200
-    data = response.json()
+    data = response.json()["data"]
     assert data and isinstance(data, dict)
     
     assert data["email"] == email 

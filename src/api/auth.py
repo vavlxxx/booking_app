@@ -1,17 +1,19 @@
-from fastapi import APIRouter, Body, HTTPException, Response
+from fastapi import APIRouter, Body, Response
 
 from src.services.auth import AuthService
 
 from src.dependencies.db import DBDep
 from src.dependencies.auth import UserIdDep
 from src.utils.exceptions import (
-    ObjectNotFoundException,
-    ObjectAlreadyExistsException
+    IncorrentLoginDataException,
+    IncorrentLoginDataHTTPException,
+    UserNotFoundException,
+    UserNotFoundHTTPException,
+    UserAlreadyExistsException,
+    UserAlreadyExistsHTTPException
 )
 
 from src.schemas.auth import (
-     UserFullInfo,
-     UserRegister, 
      UserRegisterRequest, 
      UserLoginRequest
 )
@@ -30,17 +32,16 @@ async def register_user(
         description="Данные о пользователе",
         openapi_examples=USER_REGISTER_EXAMPLES
 )):
-    hashed_password = AuthService().hash_password(user_data.password)
-    data = user_data.model_dump(exclude={"password"})
-    new_user_data = UserRegister(**data, hashed_password=hashed_password)
-    
     try:
-        user = await db.auth.add(new_user_data)
-    except ObjectAlreadyExistsException:
-        raise HTTPException(status_code=409, detail="Пользователь с таким email уже существует")
-    await db.commit()
+        user = await AuthService(db).add_user(user_data)
+    except UserAlreadyExistsException as exc:
+        raise UserAlreadyExistsHTTPException from exc
 
-    return {"status": "OK", "data": user}
+    return {
+        "status": "OK",
+        "detail": "Пользователь был успешно зарегистрирован",
+        "data": user
+    }
 
 
 @router.post("/login", summary="Пройти аутентификацию")
@@ -53,18 +54,17 @@ async def login_user(
     ),
 ):  
     try:
-        user: UserFullInfo = await db.auth.get_user_with_passwd(email=user_data.email)
-    except ObjectNotFoundException:
-        raise HTTPException(status_code=404, detail="Пользователь не найден")
+        access_token = await AuthService(db).login_user(response=response, user_data=user_data)
+    except IncorrentLoginDataException as exc:
+        raise IncorrentLoginDataHTTPException from exc
     
-    password_is_valid =  AuthService().verify_password(user_data.password, user.hashed_password)
-
-    if user is None or not password_is_valid:
-        raise HTTPException(status_code=401, detail="Неверные логин или пароль")
-        
-    access_token = AuthService.create_access_token({"user_id": user.id})
-    response.set_cookie(key="access_token", value=access_token)
-    return {"status": "OK", "access_token": access_token}
+    return {
+        "status": "OK", 
+        "detail": "Пользователь был успешно аутентифицирован",
+        "data": {
+            "access_token": access_token
+        }
+    }
 
 
 @router.get("/profile", summary="Получить профиль аутентифицированного пользователя")
@@ -74,9 +74,13 @@ async def only_auth(
 ):      
         try:
             user = await db.auth.get_one(id=user_id)
-        except ObjectNotFoundException:
-            raise HTTPException(status_code=404, detail="Пользователь не найден")
-        return user
+        except UserNotFoundException as exc:
+            raise UserNotFoundHTTPException from exc
+        return {
+            "status": "OK", 
+            "detail": "Профиль пользователя был успешно получен",
+            "data": user
+        }
 
 
 @router.delete("/logout", summary="Выйти из аккаунта")
@@ -85,4 +89,7 @@ async def logout_user(
     response: Response = Response(status_code=200)
 ):
     response.delete_cookie(key="access_token")
-    return {"status": "OK"}
+    return {
+        "status": "OK",
+        "detail": "Пользователь успешно вышел из аккаунта"
+    }

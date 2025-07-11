@@ -21,7 +21,7 @@ class DBManager:
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.session.rollback()
+        await self.rollback()
         await self.session.close()
 
     async def commit(self):

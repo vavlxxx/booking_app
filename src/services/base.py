@@ -1,18 +1,59 @@
+from datetime import date
+from typing import Any
+
+from src.schemas.rooms import FullRoomData, RoomsWithRels
 from src.utils.db_manager import DBManager
+from src.utils.exceptions import (
+    CurrentDateException, 
+    DatesMissMatchException, 
+    HotelNotFoundException, 
+    ObjectNotFoundException, 
+    RoomNotFoundException
+)
 
 
 class BaseService:
-    db: DBManager 
+    db: DBManager| None 
 
-    def __init__(self, db: DBManager) -> None:
+    def __init__(self, db: DBManager | None = None) -> None:
         self.db = db
     
+
+class ExceptionsHandler:
+
     @staticmethod
-    def _db_required(func):
-        async def wrapper(*args, **kwargs):
-            self = args[0]
-            if self.db is None:
-                raise ValueError("db attibute is not initialized, please provide the \'DBManager\' instance to the service")
-            return await func(*args, **kwargs)
-        return wrapper
-    
+    async def check_dates_validity(date_from: date, date_to: date):
+        if date_from == date_to:
+            raise CurrentDateException
+        if date_from > date_to:
+            raise DatesMissMatchException
+
+    @staticmethod
+    async def get_hotel_and_check_existence(db: DBManager, hotel_id: int):
+        try:
+            hotel = await db.hotels.get_one(id=hotel_id)
+        except ObjectNotFoundException as exc:
+            raise HotelNotFoundException from exc
+        return hotel
+
+
+    @staticmethod
+    async def get_room_and_check_existence(
+        db: DBManager, 
+        room_id: int, 
+        hotel_id: int | None = None, 
+        room_with_rel: bool = False
+    ) -> FullRoomData | RoomsWithRels | Any:
+        if hotel_id is not None:
+            await ExceptionsHandler.get_hotel_and_check_existence(db, hotel_id)
+
+        try:
+            if room_with_rel:
+                room = await db.rooms.get_one_with_rel(id=room_id)
+            else:
+                room = await db.rooms.get_one(id=room_id)
+        except ObjectNotFoundException as exc:
+            raise RoomNotFoundException from exc
+        
+        return room
+        

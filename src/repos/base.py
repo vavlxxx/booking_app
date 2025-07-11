@@ -59,7 +59,7 @@ class BaseRepository:
             logging.error(f"Cannot get data from DB, {filter_by=}, exc_type={exc.orig}")
             if isinstance(exc.orig.__cause__, DataError): # type: ignore
                 raise InvalidDataException from exc
-            logging.error(f"Unknown unhandled exception")
+            logging.error("Unknown unhandled exception")
             raise exc
 
         return self.mapper.map_to_domain_entity(obj) 
@@ -78,7 +78,7 @@ class BaseRepository:
             logging.error(f"Cannot insert data into DB, {data=}, exc_type={exc.orig}")
             if isinstance(exc.orig.__cause__, UniqueViolationError): # type: ignore
                 raise ObjectAlreadyExistsException from exc
-            logging.error(f"Unknown unhandled exception")
+            logging.error("Unknown unhandled exception")
             raise exc
 
         obj = result.scalars().one()

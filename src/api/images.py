@@ -1,23 +1,15 @@
-import shutil
-
 from fastapi import APIRouter, UploadFile
 
-from src.tasks.tasks import resize_image
-
+from src.services.images import ImagesService
+from src.utils.file_manager import FileManager
 
 router = APIRouter(prefix="/images", tags=["Изображения"])
 
 
 @router.post("/", summary="Загрузить фотографию")
 async def upload_image(file: UploadFile):
-    image_path = f"src/media/images/{file.filename}"
-    with open(image_path, "wb+") as image:
-        shutil.copyfileobj(file.file, image)
-    
-    resize_image.delay( # type: ignore
-        image_path, 
-        "src/media/images/", 
-        (300, 700, 1000)
-    )
-
-    return {"status": "OK"}
+    await ImagesService().upload_image(FileManager(file))
+    return {
+        "status": "OK",
+        "detail": "Фотография была успешно загружена"
+    }

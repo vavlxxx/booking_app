@@ -1,7 +1,7 @@
 from src.services.auth import AuthService
 
 
-def test_dencode_and_decode_access_token():
+def test_dencode_anddecode_access_token():
     data = {"user_id": 1}
     service = AuthService()
     

@@ -35,7 +35,7 @@ async def test_create_booking(
     if response.status_code != 200:
         return
     
-    data = response.json()
+    data = response.json()["data"]
     assert data is not None
     assert isinstance(response.json(), dict)
 
@@ -83,7 +83,7 @@ async def test_add_and_get_bookings(
     assert response.status_code == status_code_for_post
 
     if response.status_code == 200:
-        data = response.json()
+        data = response.json()["data"]
         assert data is not None
         assert isinstance(response.json(), dict)
 
@@ -95,7 +95,7 @@ async def test_add_and_get_bookings(
     assert response.status_code == status_code_for_get
 
     if response.status_code == 200:
-        data = response.json()
+        data = response.json()["data"]
         assert data is not None
         assert isinstance(data, list)
         assert len(data) == count
