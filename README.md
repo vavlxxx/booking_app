@@ -5,7 +5,7 @@
 docker network create booknet
 ```
 
-### PostgreSQL и Redis (Linux)
+### PostgreSQL, Redis, Nginx (Linux)
 
 ```bash
 # контейнер для PosgreSQL 17
@@ -24,9 +24,15 @@ docker run --name booking_redis \
     -p 7379:6379 \
     --network=booknet \
     -d redis
+
+# контейнер Nginx
+docker run --name booking_nginx \
+    --volume ./nginx.conf:/etc/nginx/nginx.conf \
+    --network booknet \
+    --rm -p 80:80 nginx
 ```
 
-### PostgreSQL и Redis (Windows)
+### PostgreSQL, Redis, Nginx (Windows)
 
 ```bash
 # контейнер для PosgreSQL 17
@@ -45,6 +51,13 @@ docker run --name booking_redis ^
     -p 7379:6379 ^
     --network=booknet ^
     -d redis
+
+
+# контейнер Nginx
+docker run --name booking_nginx ^
+    --volume ./nginx.conf:/etc/nginx/nginx.conf ^
+    --network booknet ^
+    --rm -p 80:80 nginx
 ```
 
 ## Запуск с помощью Dockerfile
