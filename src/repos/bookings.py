@@ -9,6 +9,7 @@ from src.schemas.bookings import BookingAdd
 from src.models.bookings import BookingsOrm
 from src.utils.exceptions import AllRoomsAreBookedException
 
+
 class BookingsRepository(BaseRepository):
     model = BookingsOrm
     mapper = BookingsMapper

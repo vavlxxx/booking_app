@@ -32,7 +32,6 @@ from src.bootstrap import redis_manager
 logging.basicConfig(level=logging.INFO)
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logging.info("Application is starting...")

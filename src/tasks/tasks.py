@@ -35,11 +35,11 @@ def resize_image(image_path: str, output_folder: str, width_sizes: list[int]):
 
 
 async def get_today_checkin():
-    logging.debug("Getting today checkin...")
+    logging.info("Getting today checkin...")
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
         bookings = await db.bookings.get_today_checkin()
-        logging.debug("Got today checkin:", bookings)
-
+        logging.info("Got today checkin: %s", bookings)
+        
 
 @celery_app.task(name="booking_today_checkin")
 def send_emails_to_users_with_today_checkin():
