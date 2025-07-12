@@ -39,7 +39,7 @@ async def get_today_checkin():
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
         bookings = await db.bookings.get_today_checkin()
         logging.info("Got today checkin: %s", bookings)
-        
+
 
 @celery_app.task(name="booking_today_checkin")
 def send_emails_to_users_with_today_checkin():

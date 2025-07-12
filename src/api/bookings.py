@@ -19,12 +19,6 @@ from src.utils.exceptions import (
 router = APIRouter(prefix="/bookings", tags=["Бронирование"])
 
 
-@router.get("/123")
-async def get_today_checkin(
-    db: DBDep
-):
-    return await db.bookings.get_today_checkin()
-
 @router.post("/", summary="Добавить новое бронирование")
 async def create_booking(
     db: DBDep,
