@@ -5,8 +5,8 @@
         context: .
       networks:
         - "booknet"
-      ports:
-        - "8888:8000"
+      # ports:
+        # - "8888:8000"
       env_file:
         - ".docker.env"
       volumes:
