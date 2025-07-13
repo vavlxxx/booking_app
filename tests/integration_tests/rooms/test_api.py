@@ -23,7 +23,7 @@ async def test_change_additionals_in_room(
     for additional in data["additionals"]:
         additionals_ids_before_change.append(additional["id"])
 
-    new_additionals_ids = get_random_ids(len(ADDITIONALS_EXAMPLES))
+    new_additionals_ids = get_random_ids(len(ADDITIONALS_EXAMPLES), exclude=additionals_ids_before_change)
     response = await ac.patch(
         url=f"hotels/{hotel_id}/rooms/{room_id}", 
         json={"additionals_ids": new_additionals_ids})

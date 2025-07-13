@@ -21,11 +21,13 @@ def get_hotel_examples() -> tuple[BasePydanticModel]:
     return tuple(result)
 
 
-def get_random_ids(max_id: int, min=1, max=4):
+def get_random_ids(max_id: int, min=1, max=4, exclude: list[int] | None = None):
     random_ids = []
     quantity = int(random.randint(1, 4))
     while len(random_ids) < quantity:
         rand_id = random.randint(1, max_id)
+        if exclude and rand_id in exclude:
+            continue
         if rand_id not in random_ids:
             random_ids.append(rand_id)
     return random_ids
