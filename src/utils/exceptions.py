@@ -32,6 +32,9 @@ class NotAuthenticatedException(ApplicationBaseException):
 class DatesMissMatchException(ApplicationBaseException):
     detail = "Некорректные даты"
 
+class BookingStartDateException(ApplicationBaseException):
+    detail = "Бронирование должно начинаться не раньше завтрашнего дня"
+
 class NotEmptyHotelException(ApplicationBaseException):
     detail = "Невозможно удалить отель, у которого есть номера"
 
@@ -43,6 +46,9 @@ class RoomNotFoundException(ObjectNotFoundException):
 
 class IncorrentLoginDataException(ApplicationBaseException):
     detail = "Неверные почта или пароль"
+
+class AdditionalAlreadyExistsException(ObjectAlreadyExistsException):
+    detail = "Такое удобство уже существует"
 
 
 class ApplicationBaseHTTPException(HTTPException):
@@ -86,6 +92,10 @@ class DatesMissMatchHTTPException(ApplicationBaseHTTPException):
     detail = "Некорректные даты"
     status_code = 422
 
+class BookingStartDateHTTPException(ApplicationBaseHTTPException):
+    detail = "Бронирование должно начинаться не раньше завтрашнего дня"
+    status_code = 422
+
 class UserAlreadyExistsHTTPException(ApplicationBaseHTTPException):
     detail = "Такой пользователь уже зарегистрирован"
     status_code = 409
@@ -97,3 +107,8 @@ class NotAuthenticatedHTTPException(ApplicationBaseHTTPException):
 class AllRoomsAreBookedHTTPException(ApplicationBaseHTTPException):
     detail = "Не осталось свободных номеров"
     status_code = 404
+
+class AdditionalAlreadyExistsHTTPException(ApplicationBaseHTTPException):
+    detail = "Такое удобство уже существует"
+    status_code = 409
+    

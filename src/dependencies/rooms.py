@@ -11,8 +11,8 @@ class DatesParams(BasePydanticModel):
     date_to: date
 
 def get_dates_params(
-    date_from: Annotated[date, Query(description="Дата въезда")],
-    date_to: Annotated[date, Query(description="Дата выезда")]
+    date_from: Annotated[date, Query(description="Дата въезда", example="2025-09-09")],
+    date_to: Annotated[date, Query(description="Дата выезда", example="2025-09-17")]
 ):
     return DatesParams(date_from=date_from, date_to=date_to)
 

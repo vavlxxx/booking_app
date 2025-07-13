@@ -5,7 +5,7 @@ from src.services.additionals import AdditionalsService
 from src.schemas.additionals import AdditionalsRequest
 from src.helpers.additionals import ADDITIONALS_EXAMPLES
 from src.dependencies.db import DBDep
-
+from src.utils.exceptions import AdditionalAlreadyExistsException, AdditionalAlreadyExistsHTTPException
 
 router = APIRouter(
     prefix="/additionals",
@@ -21,7 +21,7 @@ async def get_additionals(
     additionals = await AdditionalsService(db).get_additionals()
     return {
         "status": "OK",
-        "detail": "Удобства были успешно получены",
+        "detail": "Удобства были успешно получены" if additionals else "Удобства не найдены",
         "data": additionals
     }
 
@@ -34,7 +34,10 @@ async def create_additional(
         openapi_examples=ADDITIONALS_EXAMPLES
     )
 ):
-    additional = await AdditionalsService(db).add_additional(additional_data)
+    try:
+        additional = await AdditionalsService(db).add_additional(additional_data)
+    except AdditionalAlreadyExistsException as exc:
+        raise AdditionalAlreadyExistsHTTPException from exc
     return {
         "status": "OK", 
         "detail": "Удобство было успешно добавлено",

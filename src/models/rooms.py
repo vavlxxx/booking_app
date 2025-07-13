@@ -1,5 +1,3 @@
-from typing import Optional
-
 import typing
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -17,11 +15,11 @@ class RoomsOrm(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
     title: Mapped[str]
-    description: Mapped[Optional[str]]
+    description: Mapped[str | None]
     quantity: Mapped[int]
 
     price: Mapped[float]
-    discount: Mapped[Optional[int]] = mapped_column(default=0)
+    discount: Mapped[int | None] = mapped_column(default=0)
     discounted_price: Mapped[float] = mapped_column(Computed("price * (100 - discount) / 100"))
 
     additionals: Mapped[list["AdditionalsOrm"]] = relationship(

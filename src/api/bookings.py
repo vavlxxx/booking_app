@@ -8,6 +8,8 @@ from src.dependencies.auth import UserIdDep
 from src.utils.exceptions import (
     AllRoomsAreBookedException,
     AllRoomsAreBookedHTTPException,
+    BookingStartDateException,
+    BookingStartDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
     RoomNotFoundException,
@@ -29,6 +31,8 @@ async def create_booking(
 )): 
     try:
         booking = await BookingsService(db).add_booking(booking_data, user_id)
+    except BookingStartDateException as exc:
+        raise BookingStartDateHTTPException from exc
     except DatesMissMatchException as exc:
         raise DatesMissMatchHTTPException from exc
     except RoomNotFoundException as exc:
@@ -53,7 +57,7 @@ async def get_user_bookings(
     bookings = await BookingsService(db).get_user_bookings(user_id=user_id)
     return {
         "status": "OK",
-        "detail": "Бронирования пользователя были успешно получены",
+        "detail": "Бронирования пользователя были успешно получены" if bookings else "Бронирования пользователя не найдены",
         "data": bookings
     }
 
@@ -65,6 +69,6 @@ async def get_all_bookings(
     bookings = await BookingsService(db).get_all_bookings()
     return {
         "status": "OK",
-        "detail": "Бронирования были успешно получены",
+        "detail": "Бронирования были успешно получены" if bookings else "Бронирований не найдено",
         "data": bookings
     }

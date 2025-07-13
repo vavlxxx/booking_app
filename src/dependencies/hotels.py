@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import Depends, Query
 
@@ -7,8 +7,8 @@ from src.schemas.base import BasePydanticModel
 
 class HotelParams(BasePydanticModel):
 
-    title: Optional[str]
-    location: Optional[str]
+    title: str | None
+    location: str | None
 
 def get_hotel_params(
     title: Annotated[str | None, Query(description="Название")] = None,

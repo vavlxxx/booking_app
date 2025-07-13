@@ -1,4 +1,3 @@
-from typing import Optional
 from pydantic import Field
 
 from src.schemas.additionals import AdditionalsData
@@ -7,10 +6,10 @@ from src.schemas.base import BasePydanticModel
 
 class RoomDefault(BasePydanticModel):
     title: str
-    description: Optional[str] = Field(default="Отсутствует")
+    description: str | None = Field(default="Отсутствует")
     quantity: int
     price: float
-    discount: Optional[int] = Field(default=0, le=100, ge=0)
+    discount: int | None = Field(default=0, le=100, ge=0)
 
 class RoomAdd(RoomDefault):
     hotel_id: int
@@ -26,11 +25,11 @@ class RoomsWithRels(FullRoomData):
     additionals: list[AdditionalsData]
 
 class RoomOptional(BasePydanticModel):
-    title: Optional[str] = Field(default="Отсутствует")
-    description: Optional[str] = Field(default="Отсутствует")
-    quantity: Optional[int] = Field(default=0)
-    price: Optional[float] = Field(default=0.0)
-    discount: Optional[int] = Field(default=0)
+    title: str | None = Field(default="Отсутствует")
+    description: str | None = Field(default="Отсутствует")
+    quantity: int | None = Field(default=0)
+    price: float | None = Field(default=0.0)
+    discount: int | None = Field(default=0)
 
 class FullRoomOptional(RoomOptional):
     additionals_ids: list[int] = Field(default_factory=list)

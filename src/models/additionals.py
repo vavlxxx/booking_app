@@ -13,7 +13,7 @@ class AdditionalsOrm(Base):
     __tablename__ = "additionals"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str] = mapped_column(nullable=True)
 
     rooms: Mapped[list["RoomsOrm"]] = relationship( # type: ignore

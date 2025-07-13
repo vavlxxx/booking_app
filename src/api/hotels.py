@@ -9,9 +9,10 @@ from src.dependencies.rooms import DateDep
 from src.services.hotels import HotelsService
 
 from src.utils.exceptions import (
+    BookingStartDateException,
+    BookingStartDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
-    ObjectNotFoundException,
     HotelNotFoundException,
     HotelNotFoundHTTPException,
     InvalidDataHTTPException,
@@ -37,6 +38,8 @@ async def get_hotels(
 ):  
     try:
         hotels = await HotelsService(db).get_hotels(pagination, hotel_filter_data, dates)
+    except BookingStartDateException as exc:
+        raise BookingStartDateHTTPException from exc
     except DatesMissMatchException as exc:
         raise DatesMissMatchHTTPException from exc
     except InvalidDataException as exc:
@@ -45,7 +48,7 @@ async def get_hotels(
         "status": "OK",
         "page": pagination.page,
         "offset": pagination.offset,
-        "detail": "Отели были успешно получены", 
+        "detail": "Отели были успешно получены" if hotels else "Отели не найдены", 
         "data": hotels
     }
 
@@ -85,7 +88,7 @@ async def delete_hotel(
 ):  
     try:
         await HotelsService(db).delete_hotel(hotel_id=hotel_id)
-    except ObjectNotFoundException as exc:
+    except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
@@ -106,7 +109,7 @@ async def update_hotel_put(
 ):  
     try:
         await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
-    except ObjectNotFoundException as exc:
+    except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
@@ -124,7 +127,7 @@ async def update_hotel_patch(
 ):
     try:
         await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
-    except ObjectNotFoundException as exc:
+    except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc

@@ -1,10 +1,9 @@
-from typing import Optional
 from src.schemas.base import BasePydanticModel
 
 
 class AdditionalsRequest(BasePydanticModel):
     name: str
-    description: Optional[str]
+    description: str | None
 
 
 class AdditionalsData(AdditionalsRequest):

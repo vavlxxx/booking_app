@@ -10,6 +10,8 @@ from src.dependencies.rooms import RoomWithIdsDep, DateDep
 from src.dependencies.db import DBDep
 
 from src.utils.exceptions import (
+    BookingStartDateException,
+    BookingStartDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
     HotelNotFoundException,
@@ -37,6 +39,8 @@ async def get_rooms_by_hotel(
         rooms = await RoomsService(db).get_rooms(hotel_id=hotel_id, dates=dates)
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
+    except BookingStartDateException as exc:
+        raise BookingStartDateHTTPException from exc
     except DatesMissMatchException as exc:
         raise DatesMissMatchHTTPException from exc
     except InvalidDataException as exc:
@@ -44,7 +48,7 @@ async def get_rooms_by_hotel(
     
     return {
         "status": "OK", 
-        "detail": "Номера были успешно получены", 
+        "detail": "Номера были успешно получены" if rooms else "Номера не найдены", 
         "data": rooms
     }
 

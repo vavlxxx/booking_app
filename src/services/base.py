@@ -4,7 +4,8 @@ from typing import Any
 from src.schemas.rooms import FullRoomData, RoomsWithRels
 from src.utils.db_manager import DBManager
 from src.utils.exceptions import (
-    DatesMissMatchException, 
+    DatesMissMatchException,
+    BookingStartDateException, 
     HotelNotFoundException, 
     ObjectNotFoundException, 
     RoomNotFoundException
@@ -24,8 +25,10 @@ class ExceptionsHandler:
     async def check_dates_validity(date_from: date, date_to: date):
         # date_from_ = datetime.strptime(date_from, "%Y-%m-%d").date()
         # date_to_ = datetime.strptime(date_to, "%Y-%m-%d").date()
-        if date_from >= date_to or date_from <= date.today():
+        if date_from >= date_to:
             raise DatesMissMatchException
+        elif date_from <= date.today():
+            raise BookingStartDateException
 
     @staticmethod
     async def get_hotel_and_check_existence(db: DBManager, hotel_id: int):
