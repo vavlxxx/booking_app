@@ -60,7 +60,6 @@ async def get_room_by_id(
 ):  
     try:
         room = await RoomsService(db).get_room(ids.room_id, ids.hotel_id) 
-        await db.hotels.get_one(id=ids.hotel_id)
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except RoomNotFoundException as exc:

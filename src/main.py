@@ -25,7 +25,7 @@ from src.api.images import router as router_images
 
 # from src.config import get_settings
 from src.helpers.docs import router as router_docs
-from src.helpers.exceptions import http_exception_handler, validation_exception_handler
+from src.helpers.exceptions import http_exception_handler #, validation_exception_handler
 from src.bootstrap import redis_manager
 
 
@@ -52,7 +52,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-app.add_exception_handler(RequestValidationError, validation_exception_handler)
+# app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)
 
 app.include_router(router_docs)

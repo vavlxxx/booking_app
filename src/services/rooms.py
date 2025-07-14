@@ -87,7 +87,7 @@ class RoomsService(BaseService, ExceptionsHandler):
         room_id: int,
         hotel_id: int,
     ):
-        await self.get_room_and_check_existence(
+        room = await self.get_room_and_check_existence(
             db=self.db, 
             hotel_id=hotel_id, 
             room_id=room_id, 

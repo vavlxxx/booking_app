@@ -15,7 +15,17 @@ class RoomsAdditionalsRepository(BaseRepository):
     model: RoomsAdditionalsOrm = RoomsAdditionalsOrm # type: ignore
     mapper = RoomsAdditionalsMapper
     
-    
+    async def get_all_filtered_by_ids(self, ids_list: list):
+        query = (
+            select(self.model.id) # type: ignore
+            .select_from(self.model)
+            .filter(
+                self.model.id.in_(ids_list), # type: ignore
+            )
+        )
+        result = await self.session.execute(query)
+        return result.scalars().all()
+
     async def update_all(self, room_id: int, additionals_ids: list[int]):
 
         ids_to_delete = (
@@ -41,8 +51,8 @@ class RoomsAdditionalsRepository(BaseRepository):
             insert(self.model) # type: ignore
             .from_select(
                 ["room_id", "additional_id"],
-                select(room_id, AdditionalsOrm.id). # type: ignore
-                filter(
+                select(room_id, AdditionalsOrm.id) # type: ignore
+                .filter(
                     AdditionalsOrm.id.in_(additionals_ids),
                     AdditionalsOrm.id.notin_(
                         select(self.model.additional_id) # type: ignore
