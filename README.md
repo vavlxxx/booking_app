@@ -28,8 +28,10 @@ docker run --name booking_redis \
 # контейнер Nginx
 docker run --name booking_nginx \
     --volume ./nginx.conf:/etc/nginx/nginx.conf \
+    --volume /etc/letsencrypt:/etc/letsencrypt \
+    --volume /var/lib/letsencrypt:/var/lib/letsencrypt \
     --network booknet \
-    --rm -p 80:80 nginx
+    --rm -p 80:80 -p 443:443 -d nginx
 ```
 
 ### PostgreSQL, Redis, Nginx (Windows)
@@ -56,8 +58,10 @@ docker run --name booking_redis ^
 # контейнер Nginx
 docker run --name booking_nginx ^
     --volume ./nginx.conf:/etc/nginx/nginx.conf ^
+    --volume /etc/letsencrypt:/etc/letsencrypt ^
+    --volume /var/lib/letsencrypt:/var/lib/letsencrypt ^
     --network booknet ^
-    --rm -p 80:80 nginx
+    --rm -p 80:80 -p 443:443 -d nginx
 ```
 
 ## Запуск с помощью Dockerfile
