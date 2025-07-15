@@ -2,6 +2,7 @@ from src.schemas.additionals import RoomsAdditionalsRequest
 from src.services.base import BaseService, ExceptionsHandler
 from src.schemas.rooms import FullRoomOptional, RoomAdd, FullRoomData, RoomRequest
 from src.dependencies.rooms import DateDep
+from src.utils.exceptions import AdditionalNotFoundException
 
 
 class RoomsService(BaseService, ExceptionsHandler):
@@ -41,6 +42,11 @@ class RoomsService(BaseService, ExceptionsHandler):
         hotel_id: int
     ):
         await self.get_hotel_and_check_existence(db=self.db, hotel_id=hotel_id)
+        
+        additionals_ids = await self.db.additionals.get_all_filtered_by_ids(ids_list=room_data.additionals_ids) # type: ignore
+        if len(additionals_ids) != len(room_data.additionals_ids):
+            raise AdditionalNotFoundException
+
         _room_data = RoomAdd(**room_data.model_dump(exclude={"additionals_ids"}), hotel_id=hotel_id)
         room: FullRoomData = await self.db.rooms.add(_room_data) # type: ignore
 
@@ -100,8 +106,13 @@ class RoomsService(BaseService, ExceptionsHandler):
             hotel_id=hotel_id,
             exclude_fields={"additionals_ids"}
         )
+        
         _room_data = room_data.model_dump(exclude_unset=True)
         if "additionals_ids" in _room_data:
+            additionals_ids = await self.db.additionals.get_all_filtered_by_ids(ids_list=room_data.additionals_ids) # type: ignore
+            if len(additionals_ids) != len(room_data.additionals_ids):
+                raise AdditionalNotFoundException
+            
             await self.db.rooms_additionals.update_all(
                 room_id=room_id, 
                 additionals_ids=room_data.additionals_ids

@@ -10,11 +10,15 @@ from src.dependencies.rooms import RoomWithIdsDep, DateDep
 from src.dependencies.db import DBDep
 
 from src.utils.exceptions import (
+    AdditionalNotFoundHTTPException,
+    AdditionalNotFoundException,
     BookingStartDateException,
     BookingStartDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
     HotelNotFoundException,
+    ObjectAlreadyExistsException,
+    RoomAlreadyExistsHTTPException,
     RoomNotFoundException,
     RoomNotFoundHTTPException,
     HotelNotFoundHTTPException,
@@ -59,7 +63,7 @@ async def get_room_by_id(
     ids: RoomWithIdsDep
 ):  
     try:
-        room = await RoomsService(db).get_room(ids.room_id, ids.hotel_id) 
+        room = await RoomsService(db).get_room(ids.room_id, ids.hotel_id)
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except RoomNotFoundException as exc:
@@ -84,6 +88,10 @@ async def create_room(
 )): 
     try:
         room = await RoomsService(db).add_room(room_data, hotel_id)
+    except ObjectAlreadyExistsException as exc:
+        raise RoomAlreadyExistsHTTPException from exc
+    except AdditionalNotFoundException as exc:
+        raise AdditionalNotFoundHTTPException from exc
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except RoomNotFoundException as exc:
@@ -129,6 +137,10 @@ async def update_room_put(
 ):  
     try:
         room = await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
+    except ObjectAlreadyExistsException as exc:
+        raise RoomAlreadyExistsHTTPException from exc
+    except AdditionalNotFoundException as exc:
+        raise AdditionalNotFoundHTTPException from exc
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except RoomNotFoundException as exc:
@@ -138,7 +150,7 @@ async def update_room_put(
 
     return {
         "status": "OK",
-        "detail": "Номер был успешно полностью обновлен",
+        "detail": "Номер был успешно обновлен",
         "data": room
     }
 
@@ -154,6 +166,10 @@ async def update_room_patch(
 ):  
     try:
         room = await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
+    except ObjectAlreadyExistsException as exc:
+        raise RoomAlreadyExistsHTTPException from exc
+    except AdditionalNotFoundException as exc:
+        raise AdditionalNotFoundHTTPException from exc
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except RoomNotFoundException as exc:
@@ -163,7 +179,7 @@ async def update_room_patch(
 
     return {
         "status": "OK",
-        "detail": "Номер был успешно полностью обновлен",
+        "detail": "Номер был успешно обновлен",
         "data": room
     }
     

@@ -14,7 +14,7 @@ class RoomsOrm(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
-    title: Mapped[str]
+    title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
     quantity: Mapped[int]
 
@@ -30,5 +30,6 @@ class RoomsOrm(Base):
     __table_args__ = (
         CheckConstraint("discount >= 0 AND discount <= 100", name="check_discount_range"),
         CheckConstraint("price >= 0", name="check_price_positive"),
+        CheckConstraint("quantity >= 1", name="check_quantity_is_ge_1"),
     )
     

@@ -10,11 +10,6 @@ class AdditionalsRepository(BaseRepository):
     model = AdditionalsOrm
     mapper = AdditionalsMapper
 
-
-class RoomsAdditionalsRepository(BaseRepository):
-    model: RoomsAdditionalsOrm = RoomsAdditionalsOrm # type: ignore
-    mapper = RoomsAdditionalsMapper
-    
     async def get_all_filtered_by_ids(self, ids_list: list):
         query = (
             select(self.model.id) # type: ignore
@@ -25,6 +20,11 @@ class RoomsAdditionalsRepository(BaseRepository):
         )
         result = await self.session.execute(query)
         return result.scalars().all()
+    
+
+class RoomsAdditionalsRepository(BaseRepository):
+    model: RoomsAdditionalsOrm = RoomsAdditionalsOrm # type: ignore
+    mapper = RoomsAdditionalsMapper
 
     async def update_all(self, room_id: int, additionals_ids: list[int]):
 

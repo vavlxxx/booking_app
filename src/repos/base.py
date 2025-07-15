@@ -101,7 +101,15 @@ class BaseRepository:
             .filter_by(**filter_by)
             .values(**to_update)
         )
-        await self.session.execute(edit_obj_stmt)
+
+        try:
+            result = await self.session.execute(edit_obj_stmt)
+        except IntegrityError as exc:
+            logging.error(f"Cannot update data in DB, {data=}, exc_type={exc.orig}")
+            if isinstance(exc.orig.__cause__, UniqueViolationError): # type: ignore
+                raise ObjectAlreadyExistsException from exc
+            logging.error("Unknown unhandled exception")
+            raise exc
 
 
     async def delete(self, *filter, **filter_by):

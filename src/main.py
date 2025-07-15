@@ -2,7 +2,8 @@
 import sys
 from pathlib import Path
 
-from fastapi.exceptions import RequestValidationError
+from helpers.middlewares import LimitUploadSize
+
 sys.path.append(str(Path(__file__).parent.parent))
 
 import logging
@@ -51,6 +52,7 @@ app = FastAPI(
     redoc_url=None,
     lifespan=lifespan
 )
+app.add_middleware(LimitUploadSize, max_upload_size=50_000_000)
 
 # app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)

@@ -44,11 +44,17 @@ class HotelNotFoundException(ObjectNotFoundException):
 class RoomNotFoundException(ObjectNotFoundException):
     detail = "Номер не найден"
 
+class AdditionalNotFoundException(ObjectNotFoundException):
+    detail = "Удобство не найдено"
+
 class IncorrentLoginDataException(ApplicationBaseException):
     detail = "Неверные почта или пароль"
 
 class AdditionalAlreadyExistsException(ObjectAlreadyExistsException):
     detail = "Такое удобство уже существует"
+
+class NotAValidImageException(ApplicationBaseException):
+    detail = "Файл не является изображением"
 
 
 class ApplicationBaseHTTPException(HTTPException):
@@ -74,6 +80,10 @@ class RoomNotFoundHTTPException(ObjectNotFoundHTTPException):
 
 class UserNotFoundHTTPException(ObjectNotFoundHTTPException):
     detail = "Пользователь не найден"
+    status_code = 404
+
+class AdditionalNotFoundHTTPException(ObjectNotFoundHTTPException):
+    detail = "Указаны несуществующие удобства для номера"
     status_code = 404
 
 class IncorrentLoginDataHTTPException(ApplicationBaseHTTPException):
@@ -108,7 +118,18 @@ class AllRoomsAreBookedHTTPException(ApplicationBaseHTTPException):
     detail = "Не осталось свободных номеров"
     status_code = 404
 
+class HotelAlreadyExistsHTTPException(ApplicationBaseHTTPException):
+    detail = "Отель с таким названием уже существует"
+    status_code = 409
+
+class RoomAlreadyExistsHTTPException(ApplicationBaseHTTPException):
+    detail = "В указанном отеле уже существует номер с таким названием"
+    status_code = 409
+
 class AdditionalAlreadyExistsHTTPException(ApplicationBaseHTTPException):
     detail = "Такое удобство уже существует"
     status_code = 409
-    
+
+class NotAValidImageHTTPException(ApplicationBaseHTTPException):
+    detail = "Загруженный файл не является изображением"
+    status_code = 400

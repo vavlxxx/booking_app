@@ -13,12 +13,14 @@ from src.utils.exceptions import (
     BookingStartDateHTTPException,
     DatesMissMatchException,
     DatesMissMatchHTTPException,
+    HotelAlreadyExistsHTTPException,
     HotelNotFoundException,
     HotelNotFoundHTTPException,
     InvalidDataHTTPException,
     InvalidDataException,
     NotEmptyHotelException,
-    NotEmptyHotelHTTPException
+    NotEmptyHotelHTTPException,
+    ObjectAlreadyExistsException
 )
 
 
@@ -76,8 +78,12 @@ async def create_hotel(
         description="Данные об отеле", 
         openapi_examples=HOTEL_EXAMPLES
     )
-):
-    hotel = await HotelsService(db).add_hotel(hotel_data) # type: ignore
+):  
+    try:
+        hotel = await HotelsService(db).add_hotel(hotel_data) # type: ignore
+    except ObjectAlreadyExistsException as exc:
+        raise HotelAlreadyExistsHTTPException from exc
+    
     return {"status": "OK", "detail": "Отель был успешно добавлен", "data": hotel}
 
 
@@ -109,11 +115,13 @@ async def update_hotel_put(
 ):  
     try:
         await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
+    except ObjectAlreadyExistsException as exc:
+        raise HotelAlreadyExistsHTTPException from exc
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"status": "OK", "detail": "Отель был успешно полностью обновлен"}
+    return {"status": "OK", "detail": "Отель был успешно обновлен"}
 
 
 @router.patch("/{hotel_id}", summary="Частично обновить данные отеля")
@@ -127,8 +135,10 @@ async def update_hotel_patch(
 ):
     try:
         await HotelsService(db).edit_hotel(hotel_id=hotel_id, hotel_data=hotel_data) # type: ignore
+    except ObjectAlreadyExistsException as exc:
+        raise HotelAlreadyExistsHTTPException from exc
     except HotelNotFoundException as exc:
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"status": "OK", "detail": "Отель был успешно частично обновлен"}
+    return {"status": "OK", "detail": "Отель был успешно обновлен"}
