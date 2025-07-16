@@ -49,11 +49,7 @@ async def get_rooms_by_hotel(
         raise DatesMissMatchHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    
-    return { 
-        "detail": "Номера были успешно получены" if rooms else "Номера не найдены", 
-        "data": rooms
-    }
+    return rooms
 
 
 @router.get("/{hotel_id}/rooms/{room_id}", summary="Получить данные конкретного номера отеля")
@@ -69,11 +65,7 @@ async def get_room_by_id(
         raise RoomNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    
-    return { 
-        "detail": "Номер был успешно получен", 
-        "data": room
-    }
+    return room
 
 
 @router.post("/{hotel_id}/rooms", summary="Добавить номер для отеля")
@@ -96,11 +88,7 @@ async def create_room(
         raise RoomNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    
-    return {
-        "detail": "Номер был успешно добавлен",
-        "data": room
-    }
+    return room
 
 
 @router.delete("/{hotel_id}/rooms/{room_id}", summary="Удалить номер отеля")
@@ -116,10 +104,7 @@ async def delete_room(
         raise RoomNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-
-    return {
-        "detail": "Номер был успешно удалён"
-    }
+    return { "status": "OK" }
 
 
 @router.put("/{hotel_id}/rooms/{room_id}", summary="Обновить номер отеля")
@@ -132,7 +117,7 @@ async def update_room_put(
     )
 ):  
     try:
-        room = await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
+        await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
     except ObjectAlreadyExistsException as exc:
         raise RoomAlreadyExistsHTTPException from exc
     except AdditionalNotFoundException as exc:
@@ -143,11 +128,7 @@ async def update_room_put(
         raise RoomNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-
-    return {
-        "detail": "Номер был успешно обновлен",
-        "data": room
-    }
+    return { "status": "OK" }
 
 
 @router.patch("/{hotel_id}/rooms/{room_id}", summary="Частично обновить номер отеля")
@@ -160,7 +141,7 @@ async def update_room_patch(
     )
 ):  
     try:
-        room = await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
+        await RoomsService(db).edit_room(room_data, ids.room_id, ids.hotel_id)
     except ObjectAlreadyExistsException as exc:
         raise RoomAlreadyExistsHTTPException from exc
     except AdditionalNotFoundException as exc:
@@ -171,9 +152,5 @@ async def update_room_patch(
         raise RoomNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-
-    return {
-        "detail": "Номер был успешно обновлен",
-        "data": room
-    }
+    return { "status": "OK" }
     

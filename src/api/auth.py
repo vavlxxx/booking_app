@@ -15,7 +15,8 @@ from src.utils.exceptions import (
 
 from src.schemas.auth import (
      UserRegisterRequest, 
-     UserLoginRequest
+     UserLoginRequest,
+     UserUpdateRequest
 )
 from src.helpers.auth import (
     USER_REGISTER_EXAMPLES, 
@@ -30,16 +31,14 @@ async def register_user(
     db: DBDep,
     user_data: UserRegisterRequest = Body(
         description="Данные о пользователе",
-        openapi_examples=USER_REGISTER_EXAMPLES
+        openapi_examples=USER_LOGIN_EXAMPLES
 )):
     try:
-        user = await AuthService(db).add_user(user_data)
+        await AuthService(db).add_user(user_data)
     except UserAlreadyExistsException as exc:
         raise UserAlreadyExistsHTTPException from exc
 
-    return {
-        "detail": "Пользователь был успешно зарегистрирован"
-    }
+    return { "status": "OK" }
 
 
 @router.post("/login", summary="Пройти аутентификацию")
@@ -57,11 +56,25 @@ async def login_user(
         raise IncorrentLoginDataHTTPException from exc
     
     return { 
-        "detail": "Пользователь был успешно аутентифицирован",
-        "data": {
-            "access_token": access_token
-        }
+        "status": "OK",
+        "access_token": access_token
     }
+
+
+@router.patch("/edit", summary="Обновить данные профиля аутентифицированного пользователя")
+async def edit_user(
+    user_id: UserIdDep,
+    db: DBDep,
+    user_data: UserUpdateRequest = Body(
+        description="Данные о пользователе",
+        openapi_examples=USER_REGISTER_EXAMPLES
+    )
+):
+    try:
+        await AuthService(db).edit_user(user_data, user_id=user_id)
+    except UserNotFoundException as exc:
+        raise UserNotFoundHTTPException from exc
+    return { "status": "OK" }
 
 
 @router.get("/profile", summary="Получить профиль аутентифицированного пользователя")
@@ -70,20 +83,16 @@ async def only_auth(
         db: DBDep
 ):      
         try:
-            user = await db.auth.get_one(id=user_id)
+            user = await AuthService(db).get_user(user_id=user_id)
         except UserNotFoundException as exc:
             raise UserNotFoundHTTPException from exc
-        return {
-            "data": user
-        }
+        return user
 
 
 @router.post("/logout", summary="Выйти из аккаунта")
 async def logout_user(
-    user_id: UserIdDep,
+    _: UserIdDep,
     response: Response = Response(status_code=200)
 ):
     response.delete_cookie(key="access_token")
-    return {
-        "detail": "Пользователь успешно вышел из аккаунта"
-    }
+    return { "status": "OK" }

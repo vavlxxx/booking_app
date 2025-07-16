@@ -108,7 +108,7 @@ async def authenticated_ac(register_user, ac):
     data = resp.json()
     assert isinstance(data, dict)
 
-    access_token = data.get("data").get("access_token")
+    access_token = data.get("access_token")
     assert access_token is not None
     cookie_token = ac.cookies.get("access_token")
     assert cookie_token == access_token

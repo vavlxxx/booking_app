@@ -5,56 +5,46 @@ USER_REGISTER_EXAMPLES: Dict[str, Example] = {
     "ANNA_SMITH": {
         "summary": "Анна Смит - Менеджер",
         "value": {
-            "email": "anna.smith@example.com",
-            "password": "SecurePass123",
-            # "first_name": "Анна",
-            # "last_name": "Смит",
-            # "birthday": "1985-03-15",
-            # "gender": "Ж"
+            "first_name": "Анна",
+            "last_name": "Смит",
+            "birthday": "1985-03-15",
+            "gender": "Ж"
         }
     },
     "JOHN_JOHNSON": {
         "summary": "Джон Джонсон - Разработчик",
         "value": {
-            "email": "john.johnson@techcorp.com",
-            "password": "DevPassword456",
-            # "first_name": "Джон",
-            # "last_name": "Джонсон",
-            # "birthday": "1990-07-22",
-            # "gender": "М"
+            "first_name": "Джон",
+            "last_name": "Джонсон",
+            "birthday": "1990-07-22",
+            "gender": "М"
         }
     },
     "MARIA_GARCIA": {
         "summary": "Мария Гарсия - Дизайнер",
         "value": {
-            "email": "maria.garcia@creative.studio",
-            "password": "Design789Pass",
-            # "first_name": "Мария",
-            # "last_name": "Гарсия",
-            # "birthday": "1992-11-08",
-            # "gender": "Ж"
+            "first_name": "Мария",
+            "last_name": "Гарсия",
+            "birthday": "1992-11-08",
+            "gender": "Ж"
         }
     },
     "ALEX_PETROV": {
         "summary": "Алекс Петров - Аналитик",
         "value": {
-            "email": "alex.petrov@datacompany.ru",
-            "password": "Analytics2024",
-            # "first_name": "Алекс",
-            # "last_name": "Петров",
-            # "birthday": "1988-05-30",
-            # "gender": "М"
+            "first_name": "Алекс",
+            "last_name": "Петров",
+            "birthday": "1988-05-30",
+            "gender": "М"
         }
     },
     "ELENA_VOLKOV": {
         "summary": "Елена Волкова - Маркетолог",
         "value": {
-            "email": "elena.volkov@marketing.pro",
-            "password": "Marketing321",
-            # "first_name": "Елена",
-            # "last_name": "Волкова",
-            # "birthday": "1995-12-14",
-            # "gender": "Ж"
+            "first_name": "Елена",
+            "last_name": "Волкова",
+            "birthday": "1995-12-14",
+            "gender": "Ж"
         }
     }
 }

@@ -1,4 +1,4 @@
-from pydantic import Field, EmailStr, PastDate
+from pydantic import Field, EmailStr, PastDate, model_validator
 
 from src.schemas.base import BasePydanticModel
 
@@ -22,6 +22,15 @@ class UserRegisterRequest(UserLoginRequest):
 class UserRegister(BasePydanticModel):
     hashed_password: str
     email: EmailStr
+
+
+class UserUpdateRequest(_UserData):
+    @model_validator(mode="after")
+    def validate_all_fields_are_provide(self):
+        values = tuple(self.model_dump().values())
+        if all(map(lambda val: val is None, values)):
+            raise ValueError("provide at least one non-empty field")
+        return self 
 
    
 class User(_UserData):

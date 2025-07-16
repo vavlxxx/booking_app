@@ -41,10 +41,7 @@ async def create_booking(
         raise AllRoomsAreBookedHTTPException from exc 
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    
-    return {
-        "data": booking
-    }
+    return booking
 
 
 @router.get("/me", summary="Получить все бронирования аутентифицированного пользователя")
@@ -53,9 +50,7 @@ async def get_user_bookings(
     user_id: UserIdDep
 ):
     bookings = await BookingsService(db).get_user_bookings(user_id=user_id)
-    return {
-        "data": bookings
-    }
+    return bookings
 
 
 @router.get("/", summary="Получить список бронирований")
@@ -63,7 +58,4 @@ async def get_all_bookings(
     db: DBDep
 ):  
     bookings = await BookingsService(db).get_all_bookings()
-    return {
-        "detail": "Бронирования были успешно получены" if bookings else "Бронирований не найдено",
-        "data": bookings
-    }
+    return bookings

@@ -19,9 +19,7 @@ async def get_additionals(
     db: DBDep
 ):  
     additionals = await AdditionalsService(db).get_additionals()
-    return {
-        "data": additionals
-    }
+    return additionals
 
 
 @router.post("/", summary="Добавить новое удобство")
@@ -33,9 +31,7 @@ async def create_additional(
     )
 ):
     try:
-        additional = await AdditionalsService(db).add_additional(additional_data)
+        await AdditionalsService(db).add_additional(additional_data)
     except AdditionalAlreadyExistsException as exc:
         raise AdditionalAlreadyExistsHTTPException from exc
-    return {
-        "data": additional
-    }
+    return { "status": "OK" }

@@ -54,7 +54,7 @@ async def test_create_temp_room(db_module, ac):
     assert result.status_code == 200
     data = result.json()
     assert data is not None and isinstance(data, dict)
-    return data["data"]["id"]
+    return data["id"]
 
 @pytest.mark.parametrize(
     "title, description, quantity, price, discount, additionals_ids, expected_status,", [

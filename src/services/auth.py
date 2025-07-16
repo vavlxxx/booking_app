@@ -5,8 +5,14 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 
 from src.services.base import BaseService
-from src.schemas.auth import UserFullInfo, UserLoginRequest, UserRegister, UserRegisterRequest
 from src.config import get_settings
+from src.schemas.auth import (
+    UserFullInfo, 
+    UserLoginRequest, 
+    UserRegister, 
+    UserRegisterRequest, 
+    UserUpdateRequest
+)
 from src.utils.exceptions import (
     IncorrentLoginDataException, 
     ObjectAlreadyExistsException, 
@@ -41,6 +47,14 @@ class AuthService(BaseService):
         return user
 
 
+    async def edit_user(self, user_data: UserUpdateRequest, user_id: int):
+        try:
+            await self.db.auth.get_one(id=user_id)
+        except ObjectNotFoundException as exc:
+            raise UserNotFoundException from exc
+        await self.db.auth.edit(user_data, id=user_id)
+        await self.db.commit()
+        
     async def login_user(self, user_data: UserLoginRequest, response):
         try:
             user: UserFullInfo = await self.db.auth.get_user_with_passwd(email=user_data.email)

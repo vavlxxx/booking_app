@@ -93,7 +93,7 @@ class RoomsService(BaseService, ExceptionsHandler):
         room_id: int,
         hotel_id: int,
     ):
-        room = await self.get_room_and_check_existence(
+        await self.get_room_and_check_existence(
             db=self.db, 
             hotel_id=hotel_id, 
             room_id=room_id, 
@@ -118,12 +118,3 @@ class RoomsService(BaseService, ExceptionsHandler):
                 additionals_ids=room_data.additionals_ids
             )
         await self.db.commit()
-
-        room = await self.get_room_and_check_existence(
-            db=self.db, 
-            hotel_id=hotel_id, 
-            room_id=room_id, 
-            room_with_rel=True
-        )
-        return room
-    

@@ -66,7 +66,7 @@ async def get_hotel(
         raise NotEmptyHotelHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"data": hotel}
+    return hotel
 
 
 @router.post("/", summary="Добавить отель")
@@ -81,8 +81,7 @@ async def create_hotel(
         hotel = await HotelsService(db).add_hotel(hotel_data) # type: ignore
     except ObjectAlreadyExistsException as exc:
         raise HotelAlreadyExistsHTTPException from exc
-    
-    return {"data": hotel}
+    return hotel
 
 
 @router.delete("/{hotel_id}", summary="Удалить отель")
@@ -98,8 +97,7 @@ async def delete_hotel(
         raise InvalidDataHTTPException from exc
     except NotEmptyHotelException as exc:
         raise NotEmptyHotelHTTPException from exc
-    
-    return {"detail": "Отель был успешно удалён"}
+    return { "status": "OK" }
 
 
 @router.put("/{hotel_id}", summary="Полностью обновить данные отеля")
@@ -119,7 +117,7 @@ async def update_hotel_put(
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"detail": "Отель был успешно обновлен"}
+    return { "status": "OK" }
 
 
 @router.patch("/{hotel_id}", summary="Частично обновить данные отеля")
@@ -139,4 +137,4 @@ async def update_hotel_patch(
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"detail": "Отель был успешно обновлен"}
+    return { "status": "OK" }
