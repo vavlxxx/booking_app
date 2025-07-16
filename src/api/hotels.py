@@ -49,7 +49,6 @@ async def get_hotels(
     return {
         "page": pagination.page,
         "offset": pagination.offset,
-        "detail": "Отели были успешно получены" if hotels else "Отели не найдены", 
         "data": hotels
     }
 
@@ -67,7 +66,7 @@ async def get_hotel(
         raise NotEmptyHotelHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"detail": "Отель был успешно получен", "data": hotel}
+    return {"data": hotel}
 
 
 @router.post("/", summary="Добавить отель")
@@ -83,7 +82,7 @@ async def create_hotel(
     except ObjectAlreadyExistsException as exc:
         raise HotelAlreadyExistsHTTPException from exc
     
-    return {"detail": "Отель был успешно добавлен", "data": hotel}
+    return {"data": hotel}
 
 
 @router.delete("/{hotel_id}", summary="Удалить отель")

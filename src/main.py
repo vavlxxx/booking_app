@@ -2,8 +2,6 @@
 import sys
 from pathlib import Path
 
-from helpers.middlewares import LimitUploadSize
-
 sys.path.append(str(Path(__file__).parent.parent))
 
 import logging
@@ -11,7 +9,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 # from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
@@ -53,7 +51,6 @@ app = FastAPI(
     redoc_url=None,
     lifespan=lifespan
 )
-app.add_middleware(LimitUploadSize, max_upload_size=50_000_000)
 
 # app.add_exception_handler(RequestValidationError, validation_exception_handler)
 # app.add_exception_handler(HTTPException, http_exception_handler)

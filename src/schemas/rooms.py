@@ -7,9 +7,10 @@ from src.schemas.base import BasePydanticModel
 class RoomDefault(BasePydanticModel):
     title: str
     description: str | None = Field(default=None)
-    quantity: int
-    price: float
+    quantity: int = Field(ge=0)
+    price: float = Field(ge=0)
     discount: int | None = Field(default=0, le=100, ge=0)
+
 
 class RoomAdd(RoomDefault):
     hotel_id: int

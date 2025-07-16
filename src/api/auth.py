@@ -74,7 +74,6 @@ async def only_auth(
         except UserNotFoundException as exc:
             raise UserNotFoundHTTPException from exc
         return {
-            "detail": "Профиль пользователя был успешно получен",
             "data": user
         }
 
