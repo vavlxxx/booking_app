@@ -50,8 +50,7 @@ async def get_rooms_by_hotel(
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
     
-    return {
-        "status": "OK", 
+    return { 
         "detail": "Номера были успешно получены" if rooms else "Номера не найдены", 
         "data": rooms
     }
@@ -71,8 +70,7 @@ async def get_room_by_id(
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
     
-    return {
-        "status": "OK", 
+    return { 
         "detail": "Номер был успешно получен", 
         "data": room
     }
@@ -100,7 +98,6 @@ async def create_room(
         raise InvalidDataHTTPException from exc
     
     return {
-        "status": "OK",
         "detail": "Номер был успешно добавлен",
         "data": room
     }
@@ -121,7 +118,6 @@ async def delete_room(
         raise InvalidDataHTTPException from exc
 
     return {
-        "status": "OK",
         "detail": "Номер был успешно удалён"
     }
 
@@ -149,7 +145,6 @@ async def update_room_put(
         raise InvalidDataHTTPException from exc
 
     return {
-        "status": "OK",
         "detail": "Номер был успешно обновлен",
         "data": room
     }
@@ -178,7 +173,6 @@ async def update_room_patch(
         raise InvalidDataHTTPException from exc
 
     return {
-        "status": "OK",
         "detail": "Номер был успешно обновлен",
         "data": room
     }

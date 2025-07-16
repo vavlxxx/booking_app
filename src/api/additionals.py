@@ -20,7 +20,6 @@ async def get_additionals(
 ):  
     additionals = await AdditionalsService(db).get_additionals()
     return {
-        "status": "OK",
         "detail": "Удобства были успешно получены" if additionals else "Удобства не найдены",
         "data": additionals
     }
@@ -38,8 +37,7 @@ async def create_additional(
         additional = await AdditionalsService(db).add_additional(additional_data)
     except AdditionalAlreadyExistsException as exc:
         raise AdditionalAlreadyExistsHTTPException from exc
-    return {
-        "status": "OK", 
+    return { 
         "detail": "Удобство было успешно добавлено",
         "data": additional
     }

@@ -13,10 +13,10 @@ class UsersOrm(Base):
     email: Mapped[str] = mapped_column(String(192), unique=True)
     hashed_password: Mapped[str] = mapped_column(String(256))
 
-    last_name: Mapped[str] = mapped_column(String(128))
-    first_name: Mapped[str] = mapped_column(String(128))
-    birthday: Mapped[date]
-    gender: Mapped[str]
+    last_name: Mapped[str | None] = mapped_column(String(128))
+    first_name: Mapped[str | None] = mapped_column(String(128))
+    birthday: Mapped[date | None]
+    gender: Mapped[str | None]
 
     __table_args__ = (
         CheckConstraint("birthday <= CURRENT_DATE", name="check_birthday_validity"),

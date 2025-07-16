@@ -47,7 +47,6 @@ async def get_hotels(
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
     return {
-        "status": "OK",
         "page": pagination.page,
         "offset": pagination.offset,
         "detail": "Отели были успешно получены" if hotels else "Отели не найдены", 
@@ -68,7 +67,7 @@ async def get_hotel(
         raise NotEmptyHotelHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"status": "OK", "detail": "Отель был успешно получен", "data": hotel}
+    return {"detail": "Отель был успешно получен", "data": hotel}
 
 
 @router.post("/", summary="Добавить отель")
@@ -84,7 +83,7 @@ async def create_hotel(
     except ObjectAlreadyExistsException as exc:
         raise HotelAlreadyExistsHTTPException from exc
     
-    return {"status": "OK", "detail": "Отель был успешно добавлен", "data": hotel}
+    return {"detail": "Отель был успешно добавлен", "data": hotel}
 
 
 @router.delete("/{hotel_id}", summary="Удалить отель")
@@ -101,7 +100,7 @@ async def delete_hotel(
     except NotEmptyHotelException as exc:
         raise NotEmptyHotelHTTPException from exc
     
-    return {"status": "OK", "detail": "Отель был успешно удалён"}
+    return {"detail": "Отель был успешно удалён"}
 
 
 @router.put("/{hotel_id}", summary="Полностью обновить данные отеля")
@@ -121,7 +120,7 @@ async def update_hotel_put(
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"status": "OK", "detail": "Отель был успешно обновлен"}
+    return {"detail": "Отель был успешно обновлен"}
 
 
 @router.patch("/{hotel_id}", summary="Частично обновить данные отеля")
@@ -141,4 +140,4 @@ async def update_hotel_patch(
         raise HotelNotFoundHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
-    return {"status": "OK", "detail": "Отель был успешно обновлен"}
+    return {"detail": "Отель был успешно обновлен"}

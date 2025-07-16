@@ -43,7 +43,6 @@ async def create_booking(
         raise InvalidDataHTTPException from exc
     
     return {
-        "status": "OK",
         "detail": "Бронирование было успешно добавлено",
         "data": booking
     }
@@ -56,7 +55,6 @@ async def get_user_bookings(
 ):
     bookings = await BookingsService(db).get_user_bookings(user_id=user_id)
     return {
-        "status": "OK",
         "detail": "Бронирования пользователя были успешно получены" if bookings else "Бронирования пользователя не найдены",
         "data": bookings
     }
@@ -68,7 +66,6 @@ async def get_all_bookings(
 ):  
     bookings = await BookingsService(db).get_all_bookings()
     return {
-        "status": "OK",
         "detail": "Бронирования были успешно получены" if bookings else "Бронирований не найдено",
         "data": bookings
     }

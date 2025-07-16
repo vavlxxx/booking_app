@@ -25,6 +25,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_constraint("rooms_title_hotel_key", "rooms", type_="unique")
     op.drop_constraint("hotels_title_key", "hotels", type_="unique")
+    op.drop_constraint("rooms_title_hotel_key", "rooms", type_="unique")
     op.drop_constraint("check_quantity_is_ge_one", "rooms", type_="check")

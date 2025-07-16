@@ -103,7 +103,7 @@ class BaseRepository:
         )
 
         try:
-            result = await self.session.execute(edit_obj_stmt)
+            await self.session.execute(edit_obj_stmt)
         except IntegrityError as exc:
             logging.error(f"Cannot update data in DB, {data=}, exc_type={exc.orig}")
             if isinstance(exc.orig.__cause__, UniqueViolationError): # type: ignore

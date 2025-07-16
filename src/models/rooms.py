@@ -1,7 +1,7 @@
 import typing
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import CheckConstraint, Computed, ForeignKey
+from sqlalchemy import CheckConstraint, Computed, ForeignKey, UniqueConstraint
 
 from src.db import Base
 
@@ -14,7 +14,7 @@ class RoomsOrm(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
-    title: Mapped[str] = mapped_column(unique=True)
+    title: Mapped[str]
     description: Mapped[str | None]
     quantity: Mapped[int]
 
@@ -28,6 +28,7 @@ class RoomsOrm(Base):
     )
 
     __table_args__ = (
+        UniqueConstraint("hotel_id", "title", name="rooms_title_hotel_key"),
         CheckConstraint("discount >= 0 AND discount <= 100", name="check_discount_range"),
         CheckConstraint("price >= 0", name="check_price_positive"),
         CheckConstraint("quantity >= 1", name="check_quantity_is_ge_1"),

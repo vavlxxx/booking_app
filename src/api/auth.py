@@ -38,9 +38,7 @@ async def register_user(
         raise UserAlreadyExistsHTTPException from exc
 
     return {
-        "status": "OK",
-        "detail": "Пользователь был успешно зарегистрирован",
-        "data": user
+        "detail": "Пользователь был успешно зарегистрирован"
     }
 
 
@@ -58,8 +56,7 @@ async def login_user(
     except IncorrentLoginDataException as exc:
         raise IncorrentLoginDataHTTPException from exc
     
-    return {
-        "status": "OK", 
+    return { 
         "detail": "Пользователь был успешно аутентифицирован",
         "data": {
             "access_token": access_token
@@ -77,19 +74,17 @@ async def only_auth(
         except UserNotFoundException as exc:
             raise UserNotFoundHTTPException from exc
         return {
-            "status": "OK", 
             "detail": "Профиль пользователя был успешно получен",
             "data": user
         }
 
 
-@router.delete("/logout", summary="Выйти из аккаунта")
+@router.post("/logout", summary="Выйти из аккаунта")
 async def logout_user(
     user_id: UserIdDep,
     response: Response = Response(status_code=200)
 ):
     response.delete_cookie(key="access_token")
     return {
-        "status": "OK",
         "detail": "Пользователь успешно вышел из аккаунта"
     }
