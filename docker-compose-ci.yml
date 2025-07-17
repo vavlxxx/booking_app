@@ -20,7 +20,7 @@
       container_name: "booking_celery_beat"
       image: "booking_app_image"
       networks:
-        - "booknet"
+        - "booklet"
       command: "poetry run celery --app=src.tasks.app:celery_app beat -l INFO"
 
   networks:

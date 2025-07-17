@@ -5,7 +5,7 @@ stages:
 build-job:
   stage: build
   before_script:
-    - cp ${ENV_DOCKER} .docker.env
+    - cp ${ENV_MAIN} .env
     - cp ${ENV_TEST} .test.env
   script:
     - docker build -t booking_app_image .
