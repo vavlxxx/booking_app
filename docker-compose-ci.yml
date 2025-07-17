@@ -1,7 +1,7 @@
   services:
     booking_backend_service:
       container_name: "booking_backend"
-      image: "booking_app_image:latest"
+      image: "booking_app_image"
       networks:
         - "booknet"
       volumes:
@@ -9,7 +9,7 @@
 
     booking_celery_worker_service:
       container_name: "booking_celery_worker"
-      image: "booking_app_image:latest"
+      image: "booking_app_image"
       networks:
         - "booknet"
       volumes:
@@ -18,7 +18,7 @@
 
     booking_celery_beat_service:
       container_name: "booking_celery_beat"
-      image: "booking_app_image:latest"
+      image: "booking_app_image"
       networks:
         - "booknet"
       command: "poetry run celery --app=src.tasks.app:celery_app beat -l INFO"
