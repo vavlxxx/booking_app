@@ -57,9 +57,9 @@ docker run --name booking_redis ^
 
 # контейнер Nginx
 docker run --name booking_nginx ^
-    --volume ./nginx.conf:/etc/nginx/nginx.conf ^
+    --volume .\nginx.conf:/etc/nginx/nginx.conf ^
     --network booknet ^
-    --rm -p 80:80 -p 443:443 -d nginx
+    --rm -p 80:80 -d nginx
 ```
 
 ## Запуск с помощью Dockerfile
