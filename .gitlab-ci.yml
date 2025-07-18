@@ -36,6 +36,7 @@ migrations-job:
 tests-job:
   stage: tests
   script:
+    - set -a && source .test.env && set +a
     - docker run --rm --network booknet booking_app_image poetry run pytest
 
 deploy-job:
