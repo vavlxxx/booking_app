@@ -10,14 +10,14 @@ from httpx import AsyncClient, ASGITransport
 from src.dependencies.db import get_db
 from src.main import app
 from src.db import Base, engine_null_pool, async_session_maker_null_pool
-from src.models import * # noqa: F403
+from src.models import *  # noqa: F403
 from src.config import get_settings
 from src.utils.db_manager import DBManager
 from src.utils.helpers import (
-    get_hotel_examples, 
+    get_hotel_examples,
     get_room_examples,
     get_additionals_examples,
-    get_rooms_additionals_examples
+    get_rooms_additionals_examples,
 )
 
 
@@ -40,6 +40,7 @@ async def db():
     async for db in get_db_null_pool():
         yield db
 
+
 @pytest.fixture(scope="module")
 async def db_module():
     async for _db in get_db_null_pool():
@@ -54,7 +55,6 @@ async def async_main(check_test_env) -> None:
         await conn.run_sync(Base.metadata.create_all)
 
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
-        
         hotels = get_hotel_examples()
         await db.hotels.add_bulk(hotels)
 

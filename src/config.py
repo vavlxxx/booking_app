@@ -5,7 +5,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-
     MODE: Literal["TEST", "LOCAL", "DEV", "PROD"]
 
     DB_NAME: str
@@ -38,4 +37,4 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings():
-    return Settings() # type: ignore
+    return Settings()  # type: ignore

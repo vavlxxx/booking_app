@@ -10,8 +10,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 5,
             "price": 3500.00,
             "discount": 10,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "DELUXE_SUITE": {
         "summary": "Люкс Делюкс",
@@ -21,8 +21,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 5,
             "price": 8500.00,
             "discount": 15,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "FAMILY_ROOM": {
         "summary": "Семейный номер",
@@ -32,8 +32,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 8,
             "price": 5200.00,
             "discount": 12,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "ECONOMY_ROOM": {
         "summary": "Эконом номер",
@@ -43,8 +43,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 20,
             "price": 2100.00,
             "discount": 5,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "PRESIDENTIAL_SUITE": {
         "summary": "Президентский люкс",
@@ -54,8 +54,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 2,
             "price": 15000.00,
             "discount": 20,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "BUSINESS_ROOM": {
         "summary": "Бизнес номер",
@@ -65,8 +65,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 12,
             "price": 5800.00,
             "discount": 14,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "STUDIO_APARTMENT": {
         "summary": "Студия",
@@ -76,8 +76,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 10,
             "price": 4300.00,
             "discount": 8,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "ROMANTIC_ROOM": {
         "summary": "Романтический номер",
@@ -87,8 +87,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 4,
             "price": 7200.00,
             "discount": 16,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "PENTHOUSE": {
         "summary": "Пентхаус",
@@ -98,8 +98,8 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 1,
             "price": 18500.00,
             "discount": 25,
-            "additionals_ids": []
-        }
+            "additionals_ids": [],
+        },
     },
     "SEA_VIEW_ROOM": {
         "summary": "Номер с видом на море",
@@ -109,7 +109,7 @@ ROOM_EXAMPLES: Dict[str, Example] = {
             "quantity": 6,
             "price": 8900.00,
             "discount": 18,
-            "additionals_ids": []
-        }
-    }
+            "additionals_ids": [],
+        },
+    },
 }

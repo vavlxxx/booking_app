@@ -15,7 +15,7 @@ from src.utils.exceptions import (
     RoomNotFoundException,
     RoomNotFoundHTTPException,
     InvalidDataHTTPException,
-    InvalidDataException
+    InvalidDataException,
 )
 
 router = APIRouter(prefix="/bookings", tags=["Бронирование"])
@@ -26,9 +26,9 @@ async def create_booking(
     db: DBDep,
     user_id: UserIdDep,
     booking_data: BookingRequest = Body(
-        description="Данные о бронировании", 
-        openapi_examples=BOOKING_EXAMPLES
-)): 
+        description="Данные о бронировании", openapi_examples=BOOKING_EXAMPLES
+    ),
+):
     try:
         booking = await BookingsService(db).add_booking(booking_data, user_id)
     except BookingStartDateException as exc:
@@ -38,24 +38,19 @@ async def create_booking(
     except RoomNotFoundException as exc:
         raise RoomNotFoundHTTPException from exc
     except AllRoomsAreBookedException as exc:
-        raise AllRoomsAreBookedHTTPException from exc 
+        raise AllRoomsAreBookedHTTPException from exc
     except InvalidDataException as exc:
         raise InvalidDataHTTPException from exc
     return booking
 
 
 @router.get("/me", summary="Получить все бронирования аутентифицированного пользователя")
-async def get_user_bookings(
-    db: DBDep,
-    user_id: UserIdDep
-):
+async def get_user_bookings(db: DBDep, user_id: UserIdDep):
     bookings = await BookingsService(db).get_user_bookings(user_id=user_id)
     return bookings
 
 
 @router.get("/", summary="Получить список бронирований")
-async def get_all_bookings(
-    db: DBDep
-):  
+async def get_all_bookings(db: DBDep):
     bookings = await BookingsService(db).get_all_bookings()
     return bookings

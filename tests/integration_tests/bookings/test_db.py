@@ -9,19 +9,19 @@ async def test_booking_crud(db):
     booking_data = BookingAdd(
         user_id=user.id,
         room_id=room.id,
-        date_from=date.today()+timedelta(days=1),
-        date_to=date.today()+timedelta(days=10),
-        price=room.discounted_price
+        date_from=date.today() + timedelta(days=1),
+        date_to=date.today() + timedelta(days=10),
+        price=room.discounted_price,
     )
-    
+
     booking = await db.bookings.add(booking_data)
     assert booking
 
     booking = await db.bookings.get_one_or_none(id=booking.id)
     assert booking
     assert booking.room_id == room.id
-    assert booking.date_from == date.today()+timedelta(days=1)
-    assert booking.date_to == date.today()+timedelta(days=10)
+    assert booking.date_from == date.today() + timedelta(days=1)
+    assert booking.date_to == date.today() + timedelta(days=10)
     assert booking.price == room.discounted_price
 
     booking.price = 0

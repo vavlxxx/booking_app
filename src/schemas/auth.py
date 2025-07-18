@@ -15,8 +15,7 @@ class UserLoginRequest(BasePydanticModel):
     password: str = Field(description=" Пароль", min_length=8, max_length=256)
 
 
-class UserRegisterRequest(UserLoginRequest):
-    ...
+class UserRegisterRequest(UserLoginRequest): ...
 
 
 class UserRegister(BasePydanticModel):
@@ -30,13 +29,13 @@ class UserUpdateRequest(_UserData):
         values = tuple(self.model_dump().values())
         if all(map(lambda val: val is None, values)):
             raise ValueError("provide at least one non-empty field")
-        return self 
+        return self
 
-   
+
 class User(_UserData):
     id: int
     email: EmailStr
 
+
 class UserFullInfo(User):
     hashed_password: str
-    

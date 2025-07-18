@@ -6,35 +6,58 @@ from httpx import AsyncClient
 
 
 @pytest.mark.parametrize(
-    "room_id, date_from, date_to, status_code", [
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 404),
-])
+    "room_id, date_from, date_to, status_code",
+    [
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            404,
+        ),
+    ],
+)
 async def test_create_booking(
-    room_id, 
-    date_from, 
-    date_to, 
-    status_code,
-    authenticated_ac: AsyncClient
+    room_id, date_from, date_to, status_code, authenticated_ac: AsyncClient
 ):
     response = await authenticated_ac.post(
-        url="/bookings/",
-        json={
-            "room_id": room_id,
-            "date_from": date_from,
-            "date_to": date_to
-        }
+        url="/bookings/", json={"room_id": room_id, "date_from": date_from, "date_to": date_to}
     )
 
     assert response is not None
     assert response.status_code == status_code
     if response.status_code != 200:
         return
-    
+
     data = response.json()
     assert data is not None
     assert isinstance(response.json(), dict)
@@ -48,23 +71,73 @@ async def test_create_booking(
 async def delete_all_bookings(db_module) -> None:
     await db_module.bookings.delete()
     await db_module.commit()
-    
 
 
 @pytest.mark.parametrize(
-    "room_id, date_from, date_to, status_code_for_post, status_code_for_get, count", [
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 1),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 2),
-    (1, (date.today()-timedelta(days=20)).strftime("%Y-%m-%d"), (date.today()-timedelta(days=10)).strftime("%Y-%m-%d"), 422, 200, 2),
-    (1, date.today().strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 422, 200, 2),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 3),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 4),
-    (1, (date.today()+timedelta(days=1)).strftime("%Y-%m-%d"), (date.today()+timedelta(days=10)).strftime("%Y-%m-%d"), 200, 200, 5),
-])
+    "room_id, date_from, date_to, status_code_for_post, status_code_for_get, count",
+    [
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+            200,
+            1,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+            200,
+            2,
+        ),
+        (
+            1,
+            (date.today() - timedelta(days=20)).strftime("%Y-%m-%d"),
+            (date.today() - timedelta(days=10)).strftime("%Y-%m-%d"),
+            422,
+            200,
+            2,
+        ),
+        (
+            1,
+            date.today().strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            422,
+            200,
+            2,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+            200,
+            3,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+            200,
+            4,
+        ),
+        (
+            1,
+            (date.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+            (date.today() + timedelta(days=10)).strftime("%Y-%m-%d"),
+            200,
+            200,
+            5,
+        ),
+    ],
+)
 async def test_add_and_get_bookings(
-    room_id, 
-    date_from, 
-    date_to, 
+    room_id,
+    date_from,
+    date_to,
     status_code_for_post,
     status_code_for_get,
     count,
@@ -72,12 +145,7 @@ async def test_add_and_get_bookings(
     delete_all_bookings,
 ):
     response = await authenticated_ac.post(
-        url="/bookings/",
-        json={
-            "room_id": room_id,
-            "date_from": date_from,
-            "date_to": date_to
-        }
+        url="/bookings/", json={"room_id": room_id, "date_from": date_from, "date_to": date_to}
     )
 
     assert response is not None
@@ -101,4 +169,3 @@ async def test_add_and_get_bookings(
         assert data is not None
         assert isinstance(data, list)
         assert len(data) == count
-    

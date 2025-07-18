@@ -17,4 +17,3 @@ class RoomsAdditionalsRequest(BasePydanticModel):
 
 class RoomsAdditionalsData(RoomsAdditionalsRequest):
     id: int
-    

@@ -13,4 +13,4 @@ async def upload_image(file: UploadFile):
     except NotAValidImageException as exc:
         raise NotAValidImageHTTPException from exc
 
-    return { "status": "OK" }
+    return {"status": "OK"}

@@ -15,12 +15,12 @@
 
 # async def http_exception_handler(request: Request, exc: HTTPException):
 #     status = getattr(exc, 'status', 'ERROR')
-    
+
 #     response_content = {
 #         "detail": exc.detail,
 #         "status": status
 #     }
-    
+
 #     return JSONResponse(
 #         status_code=exc.status_code,
 #         content=response_content,

@@ -1,7 +1,7 @@
 from pydantic import Field, model_validator
 
 from src.schemas.additionals import AdditionalsData
-from src.schemas.base import BasePydanticModel 
+from src.schemas.base import BasePydanticModel
 
 
 class RoomDefault(BasePydanticModel):
@@ -15,15 +15,19 @@ class RoomDefault(BasePydanticModel):
 class RoomAdd(RoomDefault):
     hotel_id: int
 
+
 class RoomRequest(RoomDefault):
     additionals_ids: list[int] = Field(default_factory=list)
+
 
 class FullRoomData(RoomAdd):
     id: int
     discounted_price: float
 
+
 class RoomsWithRels(FullRoomData):
     additionals: list[AdditionalsData]
+
 
 class RoomOptional(BasePydanticModel):
     title: str | None = Field(default=None)
@@ -37,8 +41,8 @@ class RoomOptional(BasePydanticModel):
         values = tuple(self.model_dump().values())
         if all(map(lambda val: val is None, values)):
             raise ValueError("provide at least one non-empty field")
-        return self 
+        return self
+
 
 class FullRoomOptional(RoomOptional):
     additionals_ids: list[int] | None = Field(default=None)
-    

@@ -1,6 +1,6 @@
 from datetime import date
 
-from pydantic import Field, FutureDate 
+from pydantic import Field, FutureDate
 
 from src.schemas.base import BasePydanticModel
 

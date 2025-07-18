@@ -5,7 +5,10 @@ from src.services.additionals import AdditionalsService
 from src.schemas.additionals import AdditionalsRequest
 from src.helpers.additionals import ADDITIONALS_EXAMPLES
 from src.dependencies.db import DBDep
-from src.utils.exceptions import AdditionalAlreadyExistsException, AdditionalAlreadyExistsHTTPException
+from src.utils.exceptions import (
+    AdditionalAlreadyExistsException,
+    AdditionalAlreadyExistsHTTPException,
+)
 
 router = APIRouter(
     prefix="/additionals",
@@ -15,9 +18,7 @@ router = APIRouter(
 
 @router.get("/", summary="Получить список всех удобств")
 @cache(expire=120)
-async def get_additionals(
-    db: DBDep
-):  
+async def get_additionals(db: DBDep):
     additionals = await AdditionalsService(db).get_additionals()
     return additionals
 
@@ -26,12 +27,11 @@ async def get_additionals(
 async def create_additional(
     db: DBDep,
     additional_data: AdditionalsRequest = Body(
-        description="Название удобства", 
-        openapi_examples=ADDITIONALS_EXAMPLES
-    )
+        description="Название удобства", openapi_examples=ADDITIONALS_EXAMPLES
+    ),
 ):
     try:
         await AdditionalsService(db).add_additional(additional_data)
     except AdditionalAlreadyExistsException as exc:
         raise AdditionalAlreadyExistsHTTPException from exc
-    return { "status": "OK" }
+    return {"status": "OK"}

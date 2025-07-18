@@ -16,7 +16,7 @@ def get_hotel_examples() -> tuple[BasePydanticModel]:
     result = []
     for _, example in HOTEL_EXAMPLES.items():
         data = example.get("value", {})
-        instance = HotelAdd(**data) # type: ignore
+        instance = HotelAdd(**data)  # type: ignore
         result.append(instance)
     return tuple(result)
 
@@ -38,7 +38,7 @@ def get_room_examples() -> tuple[RoomAdd]:
     for _, example in ROOM_EXAMPLES.items():
         data = example.get("value", {})
         for hotel_id in get_random_ids(len(HOTEL_EXAMPLES)):
-            instance = RoomAdd(**data, hotel_id=hotel_id) # type: ignore
+            instance = RoomAdd(**data, hotel_id=hotel_id)  # type: ignore
             result.append(instance)
     return tuple(result)
 
@@ -47,7 +47,7 @@ def get_additionals_examples() -> tuple[AdditionalsRequest]:
     result = []
     for _, example in ADDITIONALS_EXAMPLES.items():
         data = example.get("value", {})
-        instance = AdditionalsRequest(**data) # type: ignore
+        instance = AdditionalsRequest(**data)  # type: ignore
         result.append(instance)
     return tuple(result)
 

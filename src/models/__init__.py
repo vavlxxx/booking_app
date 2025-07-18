@@ -10,4 +10,4 @@ __all__ = [
     "UsersOrm",
     "BookingsOrm",
     "AdditionalsOrm",
-] # type: ignore
+]  # type: ignore

@@ -1,4 +1,3 @@
-
 import sys
 from pathlib import Path
 
@@ -11,6 +10,7 @@ import uvicorn
 
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
+
 # from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
 
@@ -38,19 +38,16 @@ async def lifespan(app: FastAPI):
     await redis_manager.connect()
     FastAPICache.init(RedisBackend(redis_manager._redis), prefix="fastapi-cache")
     logging.info("FastAPICache initialized...")
-    yield 
+    yield
     await redis_manager.close()
     logging.info("Application is shutting down...")
+
 
 # if get_settings().MODE == "TEST":
 #     FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
 
 
-app = FastAPI(
-    docs_url=None,
-    redoc_url=None,
-    lifespan=lifespan
-)
+app = FastAPI(docs_url=None, redoc_url=None, lifespan=lifespan)
 
 # app.add_exception_handler(RequestValidationError, validation_exception_handler)
 # app.add_exception_handler(HTTPException, http_exception_handler)

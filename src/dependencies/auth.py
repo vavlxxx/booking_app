@@ -15,5 +15,6 @@ def get_token(request: Request) -> str | None:
 def get_current_user(access_token: str = Depends(get_token)):
     data = AuthService.decode_access_token(access_token)
     return data.get("user_id")
-    
+
+
 UserIdDep = Annotated[int, Depends(get_current_user)]

@@ -3,163 +3,163 @@ from fastapi.openapi.models import Example
 
 HOTEL_EXAMPLES: Dict[str, Example] = {
     "RITZ": {
-        "summary": "PARIS RITZ", 
+        "summary": "PARIS RITZ",
         "value": {
-            "location": "Париж", 
+            "location": "Париж",
             "title": "RITZ",
-            "description": "Легендарный отель в самом сердце Парижа, символ роскоши и французского шика"
-        }
+            "description": "Легендарный отель в самом сердце Парижа, символ роскоши и французского шика",
+        },
     },
     "IMPERIAL": {
         "summary": "TOKYO IMPERIAL",
         "value": {
-            "location": "Токио", 
+            "location": "Токио",
             "title": "IMPERIAL",
-            "description": "Престижный отель в центре Токио с традиционным японским сервисом"
-        }
+            "description": "Престижный отель в центре Токио с традиционным японским сервисом",
+        },
     },
     "SAVOY": {
         "summary": "LONDON SAVOY",
         "value": {
-            "location": "Лондон", 
+            "location": "Лондон",
             "title": "SAVOY",
-            "description": "Исторический отель в театральном районе Лондона с викторианской элегантностью"
-        }
+            "description": "Исторический отель в театральном районе Лондона с викторианской элегантностью",
+        },
     },
     "BURJ AL ARAB": {
         "summary": "DUBAI BURJ AL ARAB",
         "value": {
-            "location": "Дубай", 
+            "location": "Дубай",
             "title": "BURJ AL ARAB",
-            "description": "Знаменитый парусообразный отель-символ Дубая с непревзойденной роскошью"
-        }
+            "description": "Знаменитый парусообразный отель-символ Дубая с непревзойденной роскошью",
+        },
     },
     "PLAZA": {
         "summary": "NEW YORK PLAZA",
         "value": {
-            "location": "Нью-Йорк", 
+            "location": "Нью-Йорк",
             "title": "PLAZA",
-            "description": "Культовый отель на Пятой авеню напротив Центрального парка"
-        }
+            "description": "Культовый отель на Пятой авеню напротив Центрального парка",
+        },
     },
     "EXCELSIOR": {
         "summary": "ROME EXCELSIOR",
         "value": {
-            "location": "Рим", 
+            "location": "Рим",
             "title": "EXCELSIOR",
-            "description": "Элегантный отель рядом с виллой Боргезе в самом центре Вечного города"
-        }
+            "description": "Элегантный отель рядом с виллой Боргезе в самом центре Вечного города",
+        },
     },
     "MAJESTIC": {
         "summary": "BARCELONA MAJESTIC",
         "value": {
-            "location": "Барселона", 
+            "location": "Барселона",
             "title": "MAJESTIC",
-            "description": "Роскошный отель на Пасео де Грасия в сердце каталонской столицы"
-        }
+            "description": "Роскошный отель на Пасео де Грасия в сердце каталонской столицы",
+        },
     },
     "RAFFLES": {
         "summary": "SINGAPORE RAFFLES",
         "value": {
-            "location": "Сингапур", 
+            "location": "Сингапур",
             "title": "RAFFLES",
-            "description": "Колониальный отель-легенда, родина коктейля Singapore Sling"
-        }
+            "description": "Колониальный отель-легенда, родина коктейля Singapore Sling",
+        },
     },
     "FOUR SEASONS": {
         "summary": "ISTANBUL FOUR SEASONS",
         "value": {
-            "location": "Стамбул", 
+            "location": "Стамбул",
             "title": "FOUR SEASONS",
-            "description": "Современный отель с видом на Босфор в историческом районе Султанахмет"
-        }
+            "description": "Современный отель с видом на Босфор в историческом районе Султанахмет",
+        },
     },
     "WESTIN PALACE": {
         "summary": "MADRID WESTIN PALACE",
         "value": {
-            "location": "Мадрид", 
+            "location": "Мадрид",
             "title": "WESTIN PALACE",
-            "description": "Величественный отель в центре Мадрида с королевской атмосферой"
-        }
+            "description": "Величественный отель в центре Мадрида с королевской атмосферой",
+        },
     },
     "WALDORF ASTORIA": {
         "summary": "AMSTERDAM WALDORF ASTORIA",
         "value": {
-            "location": "Амстердам", 
+            "location": "Амстердам",
             "title": "WALDORF ASTORIA",
-            "description": "Роскошный отель в историческом здании на знаменитых каналах"
-        }
+            "description": "Роскошный отель в историческом здании на знаменитых каналах",
+        },
     },
     "GOLDEN WELL": {
         "summary": "PRAGUE GOLDEN WELL",
         "value": {
-            "location": "Прага", 
+            "location": "Прага",
             "title": "GOLDEN WELL",
-            "description": "Бутик-отель в барочном дворце с видом на Пражский град"
-        }
+            "description": "Бутик-отель в барочном дворце с видом на Пражский град",
+        },
     },
     "SACHER": {
         "summary": "VIENNA SACHER",
         "value": {
-            "location": "Вена", 
+            "location": "Вена",
             "title": "SACHER",
-            "description": "Легендарный отель напротив Венской оперы, родина торта Захер"
-        }
+            "description": "Легендарный отель напротив Венской оперы, родина торта Захер",
+        },
     },
     "BULGARI": {
         "summary": "MILAN BULGARI",
         "value": {
-            "location": "Милан", 
+            "location": "Милан",
             "title": "BULGARI",
-            "description": "Стильный отель от знаменитого ювелирного дома в квадрате моды"
-        }
+            "description": "Стильный отель от знаменитого ювелирного дома в квадрате моды",
+        },
     },
     "BAYERISCHER HOF": {
         "summary": "MUNICH BAYERISCHER HOF",
         "value": {
-            "location": "Мюнхен", 
+            "location": "Мюнхен",
             "title": "BAYERISCHER HOF",
-            "description": "Традиционный баварский отель в центре города с богатой историей"
-        }
+            "description": "Традиционный баварский отель в центре города с богатой историей",
+        },
     },
     "BAUR AU LAC": {
         "summary": "ZURICH BAUR AU LAC",
         "value": {
-            "location": "Цюрих", 
+            "location": "Цюрих",
             "title": "BAUR AU LAC",
-            "description": "Элитный отель на берегу Цюрихского озера с альпийским шармом"
-        }
+            "description": "Элитный отель на берегу Цюрихского озера с альпийским шармом",
+        },
     },
     "D'ANGLETERRE": {
         "summary": "COPENHAGEN D'ANGLETERRE",
         "value": {
-            "location": "Копенгаген", 
+            "location": "Копенгаген",
             "title": "D'ANGLETERRE",
-            "description": "Исторический отель на главной площади датской столицы"
-        }
+            "description": "Исторический отель на главной площади датской столицы",
+        },
     },
     "GRAND HOTEL": {
         "summary": "STOCKHOLM GRAND HOTEL",
         "value": {
-            "location": "Стокгольм", 
+            "location": "Стокгольм",
             "title": "GRAND HOTEL",
-            "description": "Знаменитый отель на набережной с видом на Королевский дворец"
-        }
+            "description": "Знаменитый отель на набережной с видом на Королевский дворец",
+        },
     },
     "CONTINENTAL": {
         "summary": "OSLO CONTINENTAL",
         "value": {
-            "location": "Осло", 
+            "location": "Осло",
             "title": "CONTINENTAL",
-            "description": "Престижный отель в самом центре норвежской столицы"
-        }
+            "description": "Престижный отель в самом центре норвежской столицы",
+        },
     },
     "KÄMP": {
         "summary": "HELSINKI KÄMP",
         "value": {
-            "location": "Хельсинки", 
+            "location": "Хельсинки",
             "title": "KÄMP",
-            "description": "Легендарный финский отель с более чем столетней историей"
-        }
-    }
+            "description": "Легендарный финский отель с более чем столетней историей",
+        },
+    },
 }

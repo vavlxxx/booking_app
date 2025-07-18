@@ -16,7 +16,7 @@ class AdditionalsOrm(Base):
     name: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str] = mapped_column(nullable=True)
 
-    rooms: Mapped[list["RoomsOrm"]] = relationship( # type: ignore
+    rooms: Mapped[list["RoomsOrm"]] = relationship(  # type: ignore
         secondary="room_additionals",
         back_populates="additionals",
     )

@@ -33,4 +33,3 @@ class RoomsOrm(Base):
         CheckConstraint("price >= 0", name="check_price_positive"),
         CheckConstraint("quantity >= 1", name="check_quantity_is_ge_1"),
     )
-    

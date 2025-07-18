@@ -11,7 +11,9 @@ from src.utils.db_manager import DBManager
 
 @celery_app.task
 def resize_image(image_path: str, output_folder: str, width_sizes: list[int]):
-    logging.debug(f"Function \'resize_image\' was invoked with args: {image_path=}, {output_folder=}, {width_sizes=}")
+    logging.debug(
+        f"Function 'resize_image' was invoked with args: {image_path=}, {output_folder=}, {width_sizes=}"
+    )
     img = Image.open(image_path)
     base_name = os.path.basename(image_path)
     name, ext = os.path.splitext(base_name)
@@ -21,17 +23,18 @@ def resize_image(image_path: str, output_folder: str, width_sizes: list[int]):
 
     for width in width_sizes:
         resized_img = img.resize(
-            (width, int(img.height * (width / img.width))), 
-            Image.Resampling.LANCZOS
+            (width, int(img.height * (width / img.width))), Image.Resampling.LANCZOS
         )
 
         new_file_name = f"{name}_{width}px{ext}"
         output_path = os.path.join(output_folder, new_file_name)
         resized_img.save(output_path)
-    
+
     img.close()
     os.remove(image_path)
-    logging.info(f"Image was resized to the following sizes: {width_sizes} and saved to {output_folder}")
+    logging.info(
+        f"Image was resized to the following sizes: {width_sizes} and saved to {output_folder}"
+    )
 
 
 async def get_today_checkin():

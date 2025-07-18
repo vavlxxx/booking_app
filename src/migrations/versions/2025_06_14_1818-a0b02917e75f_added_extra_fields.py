@@ -32,29 +32,21 @@ def upgrade() -> None:
             nullable=False,
         ),
     )
-    op.add_column(
-        "users", sa.Column("last_name", sa.String(length=128), nullable=False)
-    )
-    op.add_column(
-        "users", sa.Column("first_name", sa.String(length=128), nullable=False)
-    )
+    op.add_column("users", sa.Column("last_name", sa.String(length=128), nullable=False))
+    op.add_column("users", sa.Column("first_name", sa.String(length=128), nullable=False))
     op.add_column("users", sa.Column("birthday", sa.Date(), nullable=False))
     op.add_column("users", sa.Column("gender", sa.String(), nullable=False))
 
     op.create_unique_constraint("email_uniqueness", "users", ("email",))
 
-    op.create_check_constraint(
-        "check_discount_range", "rooms", "discount >= 0 AND discount <= 100"
-    )
+    op.create_check_constraint("check_discount_range", "rooms", "discount >= 0 AND discount <= 100")
     op.create_check_constraint("check_price_positive", "rooms", "price >= 0")
-    op.create_check_constraint(
-        "check_birthday_validity", "users", "birthday <= CURRENT_DATE"
-    )
+    op.create_check_constraint("check_birthday_validity", "users", "birthday <= CURRENT_DATE")
     op.create_check_constraint("check_gender_validity", "users", "gender IN ('М', 'Ж')")
 
 
 def downgrade() -> None:
-    op.drop_constraint(None, "users", type_="unique") # type: ignore
+    op.drop_constraint(None, "users", type_="unique")  # type: ignore
     op.drop_constraint("check_gender_validity", "users", type_="check")
     op.drop_constraint("check_birthday_validity", "users", type_="check")
     op.drop_constraint("check_price_positive", "rooms", type_="check")
