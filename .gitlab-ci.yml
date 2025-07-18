@@ -1,5 +1,8 @@
 stages:
   - build
+  - lint_format_typing_check
+  - migrations
+  - tests
   - deploy
 
 build-job:
@@ -9,6 +12,31 @@ build-job:
     - cp ${ENV_TEST} .test.env
   script:
     - docker build -t booking_app_image .
+
+lint-job:
+  stage: lint_format_typing_check
+  script:
+    - docker run --rm --network booknet booking_app_image poetry run ruff check
+
+format-job:
+  stage: lint_format_typing_check
+  script:
+    - docker run --rm --network booknet booking_app_image poetry run ruff format --check
+
+typing-job:
+  stage: lint_format_typing_check
+  script:
+    - docker run --rm --network booknet booking_app_image poetry run  pyright
+
+migrations-job:
+  stage: migrations
+  script:
+    - docker run --rm --network booknet booking_app_image poetry run  alembic upgrade head
+
+tests-job:
+  stage: tests
+  script:
+    - docker run --rm --network booknet booking_app_image poetry run pytest
 
 deploy-job:
   stage: deploy
