@@ -30,7 +30,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", summary="Получить список отелей со свободными номерами за указанный период")
+@router.get("/", summary="Получить список отелей со свободными номерами за указанный период 🏨 📅")
 @cache(expire=120)
 async def get_hotels(
     pagination: PaginationDep, 
@@ -53,7 +53,7 @@ async def get_hotels(
     }
 
 
-@router.get("/{hotel_id}", summary="Получить отель")
+@router.get("/{hotel_id}", summary="Получить отель 🏨")
 async def get_hotel(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля")
@@ -69,7 +69,7 @@ async def get_hotel(
     return hotel
 
 
-@router.post("/", summary="Добавить отель")
+@router.post("/", summary="Добавить отель ➕ 🏨")
 async def create_hotel(
     db: DBDep,
     hotel_data: HotelAdd = Body(
@@ -84,7 +84,7 @@ async def create_hotel(
     return hotel
 
 
-@router.delete("/{hotel_id}", summary="Удалить отель")
+@router.delete("/{hotel_id}", summary="Удалить отель ➖ 🏨")
 async def delete_hotel(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля")
@@ -100,7 +100,7 @@ async def delete_hotel(
     return { "status": "OK" }
 
 
-@router.put("/{hotel_id}", summary="Полностью обновить данные отеля")
+@router.put("/{hotel_id}", summary="Полностью обновить данные отеля 🏨")
 async def update_hotel_put(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля"),
@@ -120,7 +120,7 @@ async def update_hotel_put(
     return { "status": "OK" }
 
 
-@router.patch("/{hotel_id}", summary="Частично обновить данные отеля")
+@router.patch("/{hotel_id}", summary="Частично обновить данные отеля 🏨")
 async def update_hotel_patch(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля"),
