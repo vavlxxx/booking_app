@@ -9,11 +9,11 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 
 # from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
-
 
 from src.api.hotels import router as router_hotels
 from src.api.auth import router as router_auth
@@ -51,6 +51,14 @@ app = FastAPI(docs_url=None, redoc_url=None, lifespan=lifespan)
 
 # app.add_exception_handler(RequestValidationError, validation_exception_handler)
 # app.add_exception_handler(HTTPException, http_exception_handler)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router_docs)
 app.include_router(router_auth)
