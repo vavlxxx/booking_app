@@ -43,3 +43,11 @@ deploy-job:
   script:
     - docker compose -f docker-compose-ci.yml up -d
     - docker exec booking_nginx nginx -s reload
+
+cleanup-job:
+  stage: deploy
+  script:
+    - chmod +x ./delete-images-before.sh
+    - ./delete-images-before.sh booking_app_image:latest
+  when: on_success
+  allow_failure: true
