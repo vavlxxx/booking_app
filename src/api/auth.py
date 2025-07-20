@@ -19,7 +19,7 @@ from src.helpers.auth import USER_REGISTER_EXAMPLES, USER_LOGIN_EXAMPLES
 router = APIRouter(prefix="/auth", tags=["Авторизация и Аутентификация"])
 
 
-@router.post("/register", summary="Зарегистрироваться")
+@router.post("/register", summary="Зарегистрироваться 💻")
 async def register_user(
     db: DBDep,
     user_data: UserRegisterRequest = Body(
@@ -34,7 +34,7 @@ async def register_user(
     return {"status": "OK"}
 
 
-@router.post("/login", summary="Пройти аутентификацию")
+@router.post("/login", summary="Пройти аутентификацию 💻")
 async def login_user(
     db: DBDep,
     response: Response = Response(status_code=200),
@@ -50,7 +50,7 @@ async def login_user(
     return {"status": "OK", "access_token": access_token}
 
 
-@router.patch("/edit", summary="Обновить данные профиля аутентифицированного пользователя")
+@router.patch("/edit", summary="Обновить данные профиля аутентифицированного пользователя 💻")
 async def edit_user(
     user_id: UserIdDep,
     db: DBDep,
@@ -65,7 +65,7 @@ async def edit_user(
     return {"status": "OK"}
 
 
-@router.get("/profile", summary="Получить профиль аутентифицированного пользователя")
+@router.get("/profile", summary="Получить профиль аутентифицированного пользователя 💻")
 async def only_auth(user_id: UserIdDep, db: DBDep):
     try:
         user = await AuthService(db).get_user(user_id=user_id)
@@ -74,7 +74,7 @@ async def only_auth(user_id: UserIdDep, db: DBDep):
     return user
 
 
-@router.post("/logout", summary="Выйти из аккаунта")
+@router.post("/logout", summary="Выйти из аккаунта 💻")
 async def logout_user(_: UserIdDep, response: Response = Response(status_code=200)):
     response.delete_cookie(key="access_token")
     return {"status": "OK"}

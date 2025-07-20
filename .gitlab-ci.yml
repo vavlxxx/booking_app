@@ -4,6 +4,7 @@ stages:
   - migrations
   - tests
   - deploy
+  - cleanup
 
 build-job:
   stage: build
@@ -45,7 +46,7 @@ deploy-job:
     - docker exec booking_nginx nginx -s reload
 
 cleanup-job:
-  stage: deploy
+  stage: cleanup
   script:
     - chmod +x ./delete-images-before.sh
     - ./delete-images-before.sh booking_app_image:latest
