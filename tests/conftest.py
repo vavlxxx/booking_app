@@ -1,4 +1,6 @@
 # ruff: noqa: E402
+import os
+import sys
 
 from unittest import mock
 
@@ -25,6 +27,11 @@ from src.utils.helpers import (
 def check_test_env():
     assert get_settings().DB_NAME == "test_booking"
     assert get_settings().MODE == "TEST"
+
+
+def pytest_generate_tests(metafunc):
+    os.environ['DB_NAME'] = 'test_booking'
+    os.environ['MODE'] = 'TEST'
 
 
 async def get_db_null_pool():

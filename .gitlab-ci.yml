@@ -9,7 +9,7 @@ build-job:
   stage: build
   before_script:
     - cp ${ENV_MAIN} .env
-    - cp ${ENV_TEST} .test.env
+    - cp ${ENV_TEST} .env.test
   script:
     - docker build -t booking_app_image .
 
@@ -36,7 +36,6 @@ migrations-job:
 tests-job:
   stage: tests
   script:
-    - set -a && source .test.env && set +a
     - docker run --rm --network booknet booking_app_image poetry run pytest
 
 deploy-job:
