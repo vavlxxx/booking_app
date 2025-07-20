@@ -30,7 +30,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", summary="Получить список отелей со свободными номерами за указанный период 🏨 📅")
+@router.get("/", summary="Получить список отелей со свободными номерами за указанный период")
 @cache(expire=120)
 async def get_hotels(
     pagination: PaginationDep, hotel_filter_data: HoteParamsDep, dates: DateDep, db: DBDep
@@ -46,7 +46,7 @@ async def get_hotels(
     return {"page": pagination.page, "offset": pagination.offset, "data": hotels}
 
 
-@router.get("/{hotel_id}", summary="Получить отель 🏨")
+@router.get("/{hotel_id}", summary="Получить отель")
 async def get_hotel(db: DBDep, hotel_id: int = Path(description="ID отеля")):
     try:
         hotel = await HotelsService(db).get_hotel(hotel_id=hotel_id)
@@ -59,7 +59,7 @@ async def get_hotel(db: DBDep, hotel_id: int = Path(description="ID отеля")
     return hotel
 
 
-@router.post("/", summary="Добавить отель ➕ 🏨")
+@router.post("/", summary="Добавить отель")
 async def create_hotel(
     db: DBDep,
     hotel_data: HotelAdd = Body(description="Данные об отеле", openapi_examples=HOTEL_EXAMPLES),
@@ -71,7 +71,7 @@ async def create_hotel(
     return hotel
 
 
-@router.delete("/{hotel_id}", summary="Удалить отель ➖ 🏨")
+@router.delete("/{hotel_id}", summary="Удалить отель")
 async def delete_hotel(db: DBDep, hotel_id: int = Path(description="ID отеля")):
     try:
         await HotelsService(db).delete_hotel(hotel_id=hotel_id)
@@ -84,7 +84,7 @@ async def delete_hotel(db: DBDep, hotel_id: int = Path(description="ID отел�
     return {"status": "OK"}
 
 
-@router.put("/{hotel_id}", summary="Полностью обновить данные отеля 🏨")
+@router.put("/{hotel_id}", summary="Полностью обновить данные отеля")
 async def update_hotel_put(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля"),
@@ -101,7 +101,7 @@ async def update_hotel_put(
     return {"status": "OK"}
 
 
-@router.patch("/{hotel_id}", summary="Частично обновить данные отеля 🏨")
+@router.patch("/{hotel_id}", summary="Частично обновить данные отеля")
 async def update_hotel_patch(
     db: DBDep,
     hotel_id: int = Path(description="ID отеля"),
